@@ -169,76 +169,106 @@
         }
 
         .input-section {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 40px;
-            padding: 45px;
-            box-shadow:
-                0 40px 100px -20px rgba(0, 0, 0, 0.8),
-                inset 0 0 80px rgba(56, 189, 248, 0.02);
+            background: linear-gradient(135deg, rgba(8, 14, 26, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-top: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 40px rgba(56, 189, 248, 0.05);
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
+            gap: 24px;
             position: relative;
             margin-bottom: 40px;
         }
 
         .input-group {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 24px;
-            border-radius: 24px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(11, 17, 32, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 20px;
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-group::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            transition: 0.3s;
         }
 
         .input-group:hover {
-            background: rgba(56, 189, 248, 0.03);
-            border-color: rgba(56, 189, 248, 0.2);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+            background: rgba(14, 165, 233, 0.05);
+            border-color: rgba(14, 165, 233, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.15), inset 0 0 20px rgba(14, 165, 233, 0.05);
+        }
+
+        .input-group:hover::before {
+            background: var(--primary-neon);
+            box-shadow: 0 0 15px var(--primary-neon);
         }
 
         .input-group label {
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 10px;
-            font-weight: 900;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 2.5px;
-            margin-bottom: 20px;
+            letter-spacing: 1.5px;
+            margin-bottom: 14px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .input-group label i {
             color: var(--primary-neon);
             font-size: 14px;
-            filter: drop-shadow(0 0 10px var(--primary-neon));
+            filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.6));
         }
 
         .server-select,
         input[type="text"] {
             width: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 16px 20px;
+            background: rgba(8, 14, 26, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 10px;
+            padding: 14px 18px;
             color: white;
             font-size: 14px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .server-select option {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-weight: 600;
+            padding: 12px;
+        }
+
+        .server-select:hover,
+        input[type="text"]:hover {
+            border-color: rgba(56, 189, 248, 0.4);
         }
 
         .server-select:focus,
         input[type="text"]:focus {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.95);
             border-color: var(--primary-neon);
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15), inset 0 0 10px rgba(56, 189, 248, 0.1);
         }
 
         /* UID Grid - Full Width Tactical Slot */
@@ -248,21 +278,42 @@
 
         .uid-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
         }
 
         .uid-item {
-            background: rgba(255, 255, 255, 0.02) !important;
+            background: rgba(11, 17, 32, 0.4) !important;
+            padding: 12px !important;
+            border-radius: 12px !important;
+        }
+
+        .uid-item label {
+            font-size: 10px !important;
+            margin-bottom: 10px !important;
         }
 
         .uid-input {
-            background: rgba(15, 23, 42, 0.6) !important;
-            border: 1px solid rgba(56, 189, 248, 0.2) !important;
+            background: rgba(8, 14, 26, 0.7) !important;
+            border: 1px solid rgba(148, 163, 184, 0.2) !important;
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            padding: 10px 8px !important;
+            font-size: 12px !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease !important;
+            outline: none !important;
+            color: #f1f5f9;
         }
+
+        .uid-input:focus {
+            border-color: rgba(56, 189, 248, 0.8) !important;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2), inset 0 0 10px rgba(56, 189, 248, 0.1) !important;
+            background: rgba(15, 23, 42, 0.9) !important;
+        }
+
+
 
         /* Buttons Overhaul */
         .action-buttons {
@@ -323,6 +374,12 @@
         @media (max-width: 900px) {
             .input-section {
                 grid-template-columns: 1fr;
+            }
+
+            .uid-control-bar,
+            #group-mode-6-section,
+            [style*="grid-column: span 2"] {
+                grid-column: span 1 !important;
             }
 
             .uid-grid {
@@ -1942,101 +1999,8 @@
             box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3);
         }
 
-        /* ===== IMPROVED INPUT SECTION ===== */
-        .input-section {
-            background: linear-gradient(160deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.88) 100%);
-            border: 1px solid rgba(148, 163, 184, 0.28);
-            padding: 28px;
-            border-radius: 22px;
-            box-shadow:
-                0 24px 48px rgba(8, 20, 38, 0.55),
-                inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .input-section::before {
-            content: '';
-            position: absolute;
-            inset: -40% -10%;
-            background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.18), transparent 55%);
-            opacity: 0.65;
-            pointer-events: none;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .input-group label {
-            font-weight: 600;
-            color: #e2e8f0;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            font-size: 0.78rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .input-group label i {
-            color: #38bdf8;
-            font-size: 0.95rem;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1px solid rgba(99, 102, 241, 0.35);
-            border-radius: 14px;
-            box-sizing: border-box;
-            background: rgba(15, 23, 42, 0.75);
-            color: #f1f5f9;
-            transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: rgba(56, 189, 248, 0.85);
-            box-shadow:
-                0 0 0 3px rgba(56, 189, 248, 0.18),
-                0 18px 32px rgba(30, 64, 175, 0.35);
-            background: rgba(17, 24, 39, 0.92);
-        }
-
-        .input-group input::placeholder {
-            color: rgba(148, 163, 184, 0.7);
-        }
-
-        #group-mode-5-uid:focus {
-            outline: none;
-            border-color: rgba(56, 189, 248, 0.85);
-            box-shadow:
-                0 0 0 3px rgba(56, 189, 248, 0.18),
-                0 18px 32px rgba(30, 64, 175, 0.35);
-            background: rgba(17, 24, 39, 0.92);
-        }
-
-        .uid-control-bar {
-            display: flex;
-            gap: 18px;
-            align-items: flex-end;
-        }
-
-        .uid-control-bar .uid-grid {
-            flex: 1;
-        }
+        /* ===== IMPROVED INPUT SECTION (Conflicts removed) ===== */
+        /* ===== OVERRIDE FIXED ===== */
 
         .particles-inline-toggle {
             display: flex;
@@ -2132,11 +2096,7 @@
             background: rgba(17, 24, 39, 0.9);
         }
 
-        .uid-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 20px;
-        }
+        /* Removed overriding .uid-grid rule that caused 6 columns squishing */
 
         /* ===== EMOTE MODE SELECTOR ===== */
         .emote-mode-selector {
@@ -2418,24 +2378,42 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 10px 16px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(168, 85, 247, 0.95) 100%);
-            color: #0b1120;
-            border: none;
-            border-radius: 10px;
+            padding: 12px 18px;
+            background: rgba(139, 92, 246, 0.15);
+            color: #c4b5fd;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.8rem;
-            letter-spacing: 0.05em;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .select-emote-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: 0.5s;
         }
 
         .select-emote-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
-            background: linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(168, 85, 247, 1) 100%);
+            box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4), inset 0 0 15px rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.8);
+            color: #fff;
+        }
+
+        .select-emote-btn:hover::after {
+            left: 100%;
         }
 
         .select-emote-btn:active {
@@ -2443,33 +2421,36 @@
         }
 
         .select-emote-btn.has-selected {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #6ee7b7;
         }
 
         .select-emote-btn.has-selected:hover {
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-            background: linear-gradient(135deg, rgba(16, 185, 129, 1) 0%, rgba(5, 150, 105, 1) 100%);
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4), inset 0 0 15px rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.8);
+            color: #fff;
         }
 
         .send-uid-emote-btn {
             display: none;
-            /* Hidden by default */
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 10px 16px;
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.95) 0%, rgba(16, 185, 129, 0.95) 100%);
-            color: #0b1120;
-            border: none;
-            border-radius: 10px;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(16, 185, 129, 0.9) 100%);
+            color: #ffffff;
+            border: 1px solid rgba(16, 185, 129, 0.6);
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 800;
             font-size: 0.8rem;
-            letter-spacing: 0.05em;
-            transition: all 0.25s ease;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
             width: 100%;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .send-uid-emote-btn.show {
@@ -2478,8 +2459,9 @@
 
         .send-uid-emote-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(34, 197, 94, 0.5);
             background: linear-gradient(135deg, rgba(34, 197, 94, 1) 0%, rgba(16, 185, 129, 1) 100%);
+            border-color: rgba(34, 197, 94, 1);
         }
 
         .send-uid-emote-btn:disabled {
@@ -2487,6 +2469,7 @@
             cursor: not-allowed;
             transform: none;
         }
+
 
         .send-uid-emote-btn.is-loading {
             background: linear-gradient(135deg, rgba(226, 232, 240, 0.85) 0%, rgba(191, 219, 254, 0.85) 100%);
@@ -4242,7 +4225,12 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-        import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            onAuthStateChanged,
+            signInAnonymously
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -4262,7 +4250,17 @@
         const auth = getAuth(app);
 
         // Import and initialize Realtime Database
-        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import {
+            getDatabase,
+            ref,
+            ref as dbRef,
+            onValue,
+            update,
+            get,
+            set,
+            push,
+            remove
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         const database = getDatabase(app);
 
         // Export for use in other modules
@@ -4883,22 +4881,58 @@
             });
         }
 
-        // Auth module code
-        import {
-            signInWithEmailAndPassword,
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        // ===== AUTO DEVICE FINGERPRINTING =====
+        async function getDeviceFingerprint() {
+            // Try to get cached fingerprint first (consistent across sessions)
+            const cached = localStorage.getItem('px_device_fp');
+            if (cached) return cached;
+
+            // Build fingerprint from stable browser properties
+            const components = [
+                navigator.userAgent,
+                navigator.language,
+                navigator.hardwareConcurrency || '',
+                navigator.deviceMemory || '',
+                screen.width + 'x' + screen.height,
+                screen.colorDepth,
+                Intl.DateTimeFormat().resolvedOptions().timeZone,
+                navigator.platform || '',
+            ].join('|');
+
+            // Hash using SubtleCrypto (SHA-256)
+            const encoder = new TextEncoder();
+            const data = encoder.encode(components);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const fingerprint = 'PX-' + hashArray.slice(0, 12).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+
+            // Cache it so it's the same every visit
+            localStorage.setItem('px_device_fp', fingerprint);
+            return fingerprint;
+        }
+
+        // Auth module code - (Imports moved to top)
+
+        // Key-based login state
+        let currentKeyUser = null;
 
         // DOM elements - will be initialized when DOM is ready
         let loginModal, mainApp, loginForm, authError, userEmail;
 
         // Initialize DOM elements and event listeners
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             loginModal = document.getElementById('login-modal');
             mainApp = document.getElementById('main-app');
             loginForm = document.getElementById('login-form');
             authError = document.getElementById('auth-error');
-            userEmail = document.getElementById('user-email'); // This is for the welcome modal, not the top header
+            userEmail = document.getElementById('user-email');
+
+            // Auto-fill Device Fingerprint
+            const hwidInput = document.getElementById('login-hwid');
+            if (hwidInput) {
+                const fp = await getDeviceFingerprint();
+                hwidInput.value = fp;
+            }
 
             if (!loginModal || !mainApp || !loginForm) {
                 console.error('Required DOM elements not found');
@@ -4916,20 +4950,234 @@
                 }
             }
 
-            // Login form handler
+            // ===== KEY-BASED LOGIN HANDLER =====
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
+                const loginKeyInput = document.getElementById('login-key');
+                const loginBtn = document.getElementById('login-btn');
+                const enteredKey = loginKeyInput ? loginKeyInput.value.trim().toUpperCase() : '';
+                // Always use auto-detected fingerprint — never trust manual input
+                const enteredHid = await getDeviceFingerprint();
+
+                if (!enteredKey) {
+                    showError('Please enter your access key.');
+                    return;
+                }
+
+                // Show loading state
+                if (loginBtn) {
+                    loginBtn.disabled = true;
+                    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                }
 
                 try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    // Success - auth state change will handle UI update
+                    const db = getDatabase();
+                    // Search for the key in Firebase /keys/ node
+                    const keysRef = dbRef(db, 'keys');
+                    const snapshot = await get(keysRef);
+
+                    if (!snapshot.exists()) {
+                        showError('No keys found. Please contact admin.');
+                        return;
+                    }
+
+                    const keysData = snapshot.val();
+                    let foundKey = null;
+                    let foundKeyId = null;
+
+                    // Search through all keys
+                    for (const [keyId, keyData] of Object.entries(keysData)) {
+                        if (keyData.key === enteredKey) {
+                            foundKey = keyData;
+                            foundKeyId = keyId;
+                            break;
+                        }
+                    }
+
+                    if (!foundKey) {
+                        showError('❌ Invalid key. Please check your key and try again.');
+                        return;
+                    }
+
+                    if (!foundKey.isActive) {
+                        showError('⛔ This key has been deactivated. Contact admin.');
+                        return;
+                    }
+
+                    // Check expiry if set
+                    if (foundKey.expiresAt && Date.now() > foundKey.expiresAt) {
+                        showError('⏰ This key has expired. Contact admin.');
+                        return;
+                    }
+
+                    // HWID Verification — block if already bound to a different device
+                    if (foundKey.hwid && foundKey.hwid !== enteredHid) {
+                        showError('🔒 This key is locked to a different device. Contact admin to reset your Device ID.');
+                        return;
+                    }
+
+                    // Key is valid! Store user session
+                    currentKeyUser = {
+                        keyId: foundKeyId,
+                        key: foundKey.key,
+                        name: foundKey.name || 'User',
+                        email: foundKey.email || foundKey.key,
+                        plan: foundKey.plan || 'Free',
+                        hwid: enteredHid
+                    };
+
+                    // Bind HWID on first login
+                    if (!foundKey.hwid) {
+                        const { update: dbUpdate } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js");
+                        await dbUpdate(dbRef(db, `keys/${foundKeyId}`), { hwid: enteredHid });
+                        console.log('✅ Device locked to this key:', enteredHid);
+                    }
+
+                    // Update last login time in Firebase
+                    await update(dbRef(db, `keys/${foundKeyId}`), {
+                        lastLogin: Date.now(),
+                        loginCount: (foundKey.loginCount || 0) + 1
+                    });
+
+                    // Store session in localStorage
+                    localStorage.setItem('prime_key_session', JSON.stringify(currentKeyUser));
+
+                    // Show main app
+                    loginModal.style.display = 'none';
+                    mainApp.style.display = 'block';
+
+                    // Update user display
+                    const topEmailDisplay = document.getElementById('user-email');
+                    if (topEmailDisplay) topEmailDisplay.textContent = currentKeyUser.name;
+                    if (userEmail) userEmail.textContent = currentKeyUser.name;
+
+                    // Show welcome modal
+                    showWelcomeModal();
+                    window.dispatchEvent(new CustomEvent('userAuthenticated'));
+                    setTimeout(() => initMainParticles(), 300);
+                    updateNotificationBadge();
+                    setInterval(updateNotificationBadge, 5000);
+
                 } catch (error) {
-                    showError(error.message || 'Failed to sign in. Please check your credentials.');
+                    showError('Error: ' + (error.message || 'Failed to verify key.'));
+                } finally {
+                    if (loginBtn) {
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = 'Initialize Session';
+                    }
                 }
             });
+
+            // Check localStorage for existing session on page load
+            const savedSession = localStorage.getItem('prime_key_session');
+            if (savedSession) {
+                try {
+                    currentKeyUser = JSON.parse(savedSession);
+                    // Verify key is still active in Firebase
+                    const db = getDatabase();
+                    get(dbRef(db, `keys/${currentKeyUser.keyId}`)).then(snap => {
+                        if (snap.exists() && snap.val().isActive) {
+                            loginModal.style.display = 'none';
+                            mainApp.style.display = 'block';
+                            const topEmailDisplay = document.getElementById('user-email');
+                            if (topEmailDisplay) topEmailDisplay.textContent = currentKeyUser.name;
+                            showWelcomeModal();
+                            window.dispatchEvent(new CustomEvent('userAuthenticated'));
+                            setTimeout(() => initMainParticles(), 300);
+                            updateNotificationBadge();
+                            setInterval(updateNotificationBadge, 5000);
+                        } else {
+                            localStorage.removeItem('prime_key_session');
+                            loginModal.style.display = 'flex';
+                            mainApp.style.display = 'none';
+                        }
+                    }).catch(() => {
+                        loginModal.style.display = 'flex';
+                        mainApp.style.display = 'none';
+                    });
+                } catch {
+                    localStorage.removeItem('prime_key_session');
+                }
+            }
         });
+
+        // Global Logout Function (Moved outside for better availability)
+        window.logoutSession = function () {
+            if (confirm('Are you sure you want to logout?')) {
+                console.log('Logging out...');
+                localStorage.removeItem('prime_key_session');
+                sessionStorage.clear();
+                // Redirect to base URL to clear any potential query params
+                window.location.href = window.location.origin + window.location.pathname;
+            }
+        };
+
+        // ===== ADMIN TOGGLE & LOGIN FUNCTIONS =====
+        window.toggleAdminLogin = function () {
+            const section = document.getElementById('admin-login-section');
+            if (section) {
+                const isHidden = section.style.display === 'none';
+                section.style.display = isHidden ? 'block' : 'none';
+                if (isHidden) {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        };
+
+        window.handleAdminLoginMain = async function () {
+            const email = document.getElementById('admin-login-email')?.value.trim();
+            const password = document.getElementById('admin-login-password')?.value;
+            const btn = document.getElementById('admin-submit-btn');
+            const errorDiv = document.getElementById('auth-error');
+
+            if (!email || !password) {
+                if (errorDiv) { errorDiv.textContent = 'Email এবং Password দিন।'; errorDiv.style.display = 'block'; }
+                return;
+            }
+
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...'; }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                if (errorDiv) {
+                    errorDiv.textContent = '❌ ' + (error.message || 'Login failed.');
+                    errorDiv.style.display = 'block';
+                    setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+                }
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-user-shield"></i> Admin Sign In'; }
+            }
+        };
+
+        // Listen for Gmail admin login state
+        onAuthStateChanged(auth, (user) => {
+            if (user && !currentKeyUser) {
+                // If special admin login, go to admin panel
+                if (user.email === 'asshanto115@gmail.com') {
+                    window.location.href = 'admin.html';
+                    return;
+                }
+
+                const loginModal = document.getElementById('login-modal');
+                const mainApp = document.getElementById('main-app');
+                const topEmailDisplay = document.getElementById('user-email');
+
+                if (loginModal) loginModal.style.display = 'none';
+                if (mainApp) mainApp.style.display = 'block';
+                if (topEmailDisplay) topEmailDisplay.textContent = user.email.split('@')[0].toUpperCase();
+
+                if (typeof showWelcomeModal === 'function') showWelcomeModal();
+                window.dispatchEvent(new CustomEvent('userAuthenticated'));
+                if (typeof initMainParticles === 'function') {
+                    setTimeout(() => initMainParticles(), 300);
+                }
+                if (typeof updateNotificationBadge === 'function') {
+                    updateNotificationBadge();
+                }
+            }
+        });
+
 
         const particleThemes = [
             {
@@ -5284,29 +5532,85 @@
 
                     <div id="auth-error" class="auth-error" style="display: none; width: 100%;"></div>
 
+                    <!-- KEY LOGIN FORM (Primary) -->
                     <form id="login-form" class="login-form">
                         <div class="form-group-item">
-                            <label class="form-label">Email Address</label>
+                            <label class="form-label">
+                                <i class="fas fa-key" style="color: #38bdf8; margin-right: 6px;"></i>
+                                Access Key
+                            </label>
                             <div class="input-wrapper">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="login-email" placeholder="your@email.com" required>
+                                <i class="fas fa-shield-alt"></i>
+                                <input type="text" id="login-key" placeholder="PRIME-XXXX-XXXX-XXXX" required
+                                    autocomplete="off" spellcheck="false"
+                                    style="letter-spacing: 2px; font-family: monospace; text-transform: uppercase;">
                             </div>
                         </div>
 
                         <div class="form-group-item">
-                            <label class="form-label">Secret Password</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="login-password" placeholder="••••••••" required>
+                            <label class="form-label">
+                                <i class="fas fa-microchip" style="color: #38bdf8; margin-right: 6px;"></i>
+                                Device Fingerprint
+                            </label>
+                            <div class="input-wrapper" style="position: relative;">
+                                <i class="fas fa-fingerprint" style="color: #22c55e;"></i>
+                                <input type="text" id="login-hwid" readonly
+                                    style="letter-spacing: 1px; font-family: monospace; color: #4ade80; font-size: 11px; cursor: not-allowed; background: rgba(34,197,94,0.05); border-color: rgba(34,197,94,0.2);"
+                                    placeholder="Detecting...">
                             </div>
+                            <p
+                                style="margin: 8px 0 0; font-size: 11px; color: rgba(34,197,94,0.5); text-align: center;">
+                                <i class="fas fa-lock" style="margin-right: 4px;"></i> Auto-detected · This device will
+                                be locked to your key
+                            </p>
                         </div>
 
                         <button type="submit" class="auth-btn" id="login-btn">
+                            <i class="fas fa-terminal" style="margin-right: 8px;"></i>
                             Initialize Session
                         </button>
                     </form>
 
-                    <div class="login-divider">
+                    <!-- ADMIN TOGGLE -->
+                    <div style="text-align: center; margin-top: 15px;">
+                        <button type="button" onclick="toggleAdminLogin()" id="admin-toggle-btn"
+                            style="background: transparent; border: none; color: rgba(147, 197, 253, 0.6); font-size: 11px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 6px; transition: 0.3s;">
+                            <i class="fas fa-user-shield"></i> Admin Control Access
+                        </button>
+                    </div>
+
+                    <!-- ADMIN EMAIL + PASSWORD FORM (Hidden) -->
+                    <div id="admin-login-section"
+                        style="display: none; margin-top: 12px; padding: 18px; background: rgba(124,58,237,0.05); border: 1px solid rgba(124,58,237,0.15); border-radius: 16px;">
+                        <form id="admin-login-form-main" class="login-form" style="gap: 12px;">
+                            <div class="form-group-item" style="margin: 0;">
+                                <label class="form-label" style="font-size: 10px;">
+                                    <i class="fas fa-envelope" style="color: #8b5cf6;"></i> Gmail / Email
+                                </label>
+                                <div class="input-wrapper" style="border-color: rgba(124,58,237,0.3);">
+                                    <i class="fas fa-envelope" style="color: #8b5cf6;"></i>
+                                    <input type="email" id="admin-login-email" placeholder="admin@gmail.com"
+                                        autocomplete="email">
+                                </div>
+                            </div>
+                            <div class="form-group-item" style="margin: 0;">
+                                <label class="form-label" style="font-size: 10px;">
+                                    <i class="fas fa-lock" style="color: #8b5cf6;"></i> Password
+                                </label>
+                                <div class="input-wrapper" style="border-color: rgba(124,58,237,0.3);">
+                                    <i class="fas fa-lock" style="color: #8b5cf6;"></i>
+                                    <input type="password" id="admin-login-password" placeholder="••••••••">
+                                </div>
+                            </div>
+                            <button type="button" id="admin-submit-btn" onclick="handleAdminLoginMain()"
+                                style="width: 100%; padding: 13px; background: linear-gradient(135deg, #7c3aed, #6d28d9); border: none; border-radius: 12px; color: white; font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 20px -5px rgba(124,58,237,0.5); transition: all 0.3s ease;">
+                                <i class="fas fa-user-shield"></i>
+                                Admin Sign In
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="login-divider" style="margin-top: 16px;">
                         <span>SECURE ALTERNATIVE</span>
                     </div>
 
@@ -5414,7 +5718,7 @@
                             <span>SYSTEM TERMINAL</span>
                         </div>
                         <div id="dropdown-social-links" style="display: flex; flex-direction: column; gap: 10px;">
-                            <a href="https://youtube.com/@primexofficial-g4m?si=7Chr0KpuFt0kWdRA" target="_blank"
+                            <a href="https://youtube.com/@primexofficial-g4m?si=7Ch0KpuFt0kWdRA" target="_blank"
                                 class="social-link-item youtube"
                                 style="display: flex; align-items:center; gap: 12px; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.02); color: white; text-decoration: none; transition: 0.3s;">
                                 <i class="fab fa-youtube" style="color: #ff0000; font-size: 18px;"></i>
@@ -5439,6 +5743,16 @@
                                     <span style="font-size: 10px; opacity: 0.6;">Instant Support</span>
                                 </div>
                             </a>
+
+                            <!-- Logout Button -->
+                            <button type="button" onclick="window.logoutSession()"
+                                style="margin-top: 5px; width: 100%; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.3s; font-family: inherit;">
+                                <i class="fas fa-sign-out-alt" style="font-size: 18px;"></i>
+                                <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                                    <strong style="font-size: 13px;">Logout</strong>
+                                    <span style="font-size: 10px; opacity: 0.6;">Close Current Session</span>
+                                </div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -5518,79 +5832,91 @@
             </div>
             <div id="group-mode-6-section" style="display: none; grid-column: span 2;">
                 <div
-                    style="background: rgba(56, 189, 248, 0.03); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 24px; padding: 28px;">
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    style="background: linear-gradient(135deg, rgba(8, 14, 26, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%); backdrop-filter: blur(20px); border: 1px solid rgba(14, 165, 233, 0.3); border-left: 4px solid var(--primary-neon); border-radius: 20px; padding: 32px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6), inset 0 0 30px rgba(14, 165, 233, 0.05); position: relative; overflow: hidden;">
+                    <!-- Decorative element -->
+                    <div
+                        style="position: absolute; top: 0; right: 0; width: 150px; height: 150px; background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 70%); border-radius: 50%; transform: translate(30%, -30%); pointer-events: none;">
+                    </div>
+
+                    <div
+                        style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; position: relative; z-index: 1;">
                         <div
-                            style="width: 40px; height: 40px; background: rgba(56, 189, 248, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-size: 18px;">
-                            <i class="fas fa-users"></i>
+                            style="width: 48px; height: 48px; background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--primary-neon); font-size: 20px; box-shadow: 0 0 15px rgba(14, 165, 233, 0.2);">
+                            <i class="fas fa-users-cog"></i>
                         </div>
                         <div>
                             <p
-                                style="margin:0; font-size: 13px; font-weight: 900; color: #38bdf8; text-transform: uppercase; letter-spacing: 2px;">
-                                6 Players Group Mode</p>
-                            <p style="margin:0; font-size: 11px; color: rgba(255,255,255,0.4);">Enter all 6 player UIDs
-                                and Team Code to add them together</p>
+                                style="margin:0; font-size: 14px; font-weight: 900; color: #e2e8f0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                                6 Players Squad Link
+                            </p>
+                            <p
+                                style="margin:4px 0 0; font-size: 11px; color: rgba(148, 163, 184, 0.8); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                                Deploy emote to multiple targets simultaneously
+                            </p>
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 18px;">
+                    <div style="margin-bottom: 24px; position: relative; z-index: 1;">
                         <label
-                            style="display: block; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;">
-                            <i class="fas fa-hashtag" style="color: #38bdf8;"></i> Team Code
+                            style="display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+                            <i class="fas fa-satellite-dish"
+                                style="color: var(--primary-neon); filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));"></i>
+                            Session Team Code
                         </label>
                         <input type="text" id="group6-team-code" placeholder="Enter Team Code"
-                            style="width: 100%; padding: 14px 18px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 14px; color: #f1f5f9; font-weight: 500; font-size: 14px;">
+                            style="width: 100%; padding: 16px 20px; background: rgba(11, 17, 32, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; color: #f8fafc; font-weight: 600; font-size: 14px; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px;">
-                        <div>
-                            <label
-                                style="display: block; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;"><i
-                                    class="fas fa-user" style="color:#38bdf8;"></i> Player 1</label>
-                            <input type="text" id="group6-uid1" placeholder="UID 1 (Leader)"
-                                style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; color: #f1f5f9; font-weight: 500; font-size: 13px;">
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; position: relative; z-index: 1;">
+                        <div class="input-group"
+                            style="padding: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05);">
+                            <label style="margin-bottom: 12px; color: #38bdf8; font-size: 10px;"><i
+                                    class="fas fa-crosshairs"></i> Target 1 (Leader)</label>
+                            <input type="text" id="group6-uid1" placeholder="UID"
+                                style="padding: 12px; background: rgba(8, 14, 26, 0.9);">
                         </div>
-                        <div>
-                            <label
-                                style="display: block; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;"><i
-                                    class="fas fa-user" style="color:#38bdf8;"></i> Player 2</label>
-                            <input type="text" id="group6-uid2" placeholder="UID 2"
-                                style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; color: #f1f5f9; font-weight: 500; font-size: 13px;">
+                        <div class="input-group"
+                            style="padding: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05);">
+                            <label style="margin-bottom: 12px; font-size: 10px;"><i class="fas fa-crosshairs"></i>
+                                Target 2</label>
+                            <input type="text" id="group6-uid2" placeholder="UID"
+                                style="padding: 12px; background: rgba(8, 14, 26, 0.9);">
                         </div>
-                        <div>
-                            <label
-                                style="display: block; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;"><i
-                                    class="fas fa-user" style="color:#38bdf8;"></i> Player 3</label>
-                            <input type="text" id="group6-uid3" placeholder="UID 3"
-                                style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; color: #f1f5f9; font-weight: 500; font-size: 13px;">
+                        <div class="input-group"
+                            style="padding: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05);">
+                            <label style="margin-bottom: 12px; font-size: 10px;"><i class="fas fa-crosshairs"></i>
+                                Target 3</label>
+                            <input type="text" id="group6-uid3" placeholder="UID"
+                                style="padding: 12px; background: rgba(8, 14, 26, 0.9);">
                         </div>
-                        <div>
-                            <label
-                                style="display: block; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;"><i
-                                    class="fas fa-user" style="color:#38bdf8;"></i> Player 4</label>
-                            <input type="text" id="group6-uid4" placeholder="UID 4"
-                                style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; color: #f1f5f9; font-weight: 500; font-size: 13px;">
+                        <div class="input-group"
+                            style="padding: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05);">
+                            <label style="margin-bottom: 12px; font-size: 10px;"><i class="fas fa-crosshairs"></i>
+                                Target 4</label>
+                            <input type="text" id="group6-uid4" placeholder="UID"
+                                style="padding: 12px; background: rgba(8, 14, 26, 0.9);">
                         </div>
-                        <div>
-                            <label
-                                style="display: block; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;"><i
-                                    class="fas fa-user" style="color:#38bdf8;"></i> Player 5</label>
-                            <input type="text" id="group6-uid5" placeholder="UID 5"
-                                style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; color: #f1f5f9; font-weight: 500; font-size: 13px;">
+                        <div class="input-group"
+                            style="padding: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05);">
+                            <label style="margin-bottom: 12px; font-size: 10px;"><i class="fas fa-crosshairs"></i>
+                                Target 5</label>
+                            <input type="text" id="group6-uid5" placeholder="UID"
+                                style="padding: 12px; background: rgba(8, 14, 26, 0.9);">
                         </div>
-                        <div>
-                            <label
-                                style="display: block; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;"><i
-                                    class="fas fa-user" style="color:#38bdf8;"></i> Player 6</label>
-                            <input type="text" id="group6-uid6" placeholder="UID 6"
-                                style="width: 100%; padding: 12px 14px; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; color: #f1f5f9; font-weight: 500; font-size: 13px;">
+                        <div class="input-group"
+                            style="padding: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05);">
+                            <label style="margin-bottom: 12px; font-size: 10px;"><i class="fas fa-crosshairs"></i>
+                                Target 6</label>
+                            <input type="text" id="group6-uid6" placeholder="UID"
+                                style="padding: 12px; background: rgba(8, 14, 26, 0.9);">
                         </div>
                     </div>
 
                     <button type="button" id="group-mode-6-send-btn"
-                        style="width: 100%; padding: 18px; background: linear-gradient(90deg, #0ea5e9, #6366f1); border: none; border-radius: 16px; color: white; font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; box-shadow: 0 15px 35px -10px rgba(56, 189, 248, 0.4);">
-                        <i class="fas fa-users"></i>
-                        ADD ALL 6 PLAYERS TO GROUP
+                        style="width: 100%; padding: 20px; background: linear-gradient(135deg, rgba(14, 165, 233, 0.8) 0%, rgba(56, 189, 248, 0.9) 100%); border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 14px; color: white; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.4), inset 0 2px 5px rgba(255,255,255,0.3); position: relative; z-index: 1;">
+                        <i class="fas fa-satellite-dish" style="animation: pulse 2s infinite;"></i>
+                        TRANSMIT TO SQUAD
                     </button>
                 </div>
             </div>
@@ -5611,7 +5937,7 @@
                     </option>
                 </select>
             </div>
-            <div class="input-group">
+            <div class="input-group" style="grid-column: span 2;">
                 <label for="team-code"><i class="fas fa-users"></i> Team Code:</label>
                 <input type="text" id="team-code" placeholder="Enter team code">
             </div>

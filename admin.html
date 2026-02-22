@@ -4,8 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel -PRIME-X OFFICIAL</title>
+    <title>Admin Panel - PRIME-X OFFICIAL</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script type="module">
         // Import Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -45,67 +49,17 @@
         const ADMIN_EMAIL = "asshanto115@gmail.com"; // এখানে আপনার এডমিন ইমেইল দিন
 
         // Check authentication status
-        const adminLoginModal = document.getElementById('admin-login-modal');
         const adminContainer = document.getElementById('admin-container');
-        const adminLoginForm = document.getElementById('admin-login-form');
-        const adminLoginError = document.getElementById('admin-login-error');
         const logoutBtn = document.getElementById('logout-btn');
 
         // Monitor auth state
         onAuthStateChanged(auth, (user) => {
             if (user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                 // Authorized admin user
-                adminLoginModal.style.display = 'none';
                 adminContainer.style.display = 'block';
             } else {
-                // Not authorized or not logged in
-                if (user && user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-                    signOut(auth); // Sign out unauthorized user
-                    showAdminError('শুধুমাত্র অনুমোদিত এডমিন লগইন করতে পারবে!');
-                }
-                adminLoginModal.style.display = 'flex';
-                adminContainer.style.display = 'none';
-            }
-        });
-
-        // Handle admin login
-        adminLoginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('admin-email').value.trim();
-            const password = document.getElementById('admin-password').value;
-
-            // Check if email matches admin email
-            if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-                showAdminError('আপনি এডমিন প্যানেল এক্সেস করার অনুমতি পাননি!');
-                return;
-            }
-
-            try {
-                // Try to sign in
-                await signInWithEmailAndPassword(auth, email, password);
-                adminLoginError.style.display = 'none';
-            } catch (error) {
-                console.error("Firebase Auth Error:", error.code);
-
-                if (error.code === 'auth/operation-not-allowed') {
-                    showAdminError('ভুল: Firebase-এ Email/Password মেথডটি চালু (Enable) করা নেই! দয়া করে Firebase Console > Authentication > Sign-in method-এ গিয়ে এটি Enable করুন।');
-                } else if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-login-credentials' || error.code === 'auth/network-request-failed') {
-                    try {
-                        showAdminError('অ্যাকাউন্ট চেক করা হচ্ছে... দয়া করে অপেক্ষা করুন।');
-                        await createUserWithEmailAndPassword(auth, email, password);
-                        showAdminError('অ্যাডমিন অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
-                    } catch (createError) {
-                        if (createError.code === 'auth/operation-not-allowed') {
-                            showAdminError('ভুল: Firebase Console-এ Email/Password মেথডটি Enable করা নেই!');
-                        } else if (createError.code === 'auth/email-already-in-use') {
-                            showAdminError('পাসওয়ার্ড ভুল! দয়া করে সঠিক পাসওয়ার্ড দিন।');
-                        } else {
-                            showAdminError('Error: ' + createError.code);
-                        }
-                    }
-                } else {
-                    showAdminError('Firebase Error: ' + error.code);
-                }
+                // Not authorized or not logged in - redirect to home
+                window.location.href = 'index.html';
             }
         });
 
@@ -114,77 +68,255 @@
             logoutBtn.addEventListener('click', async () => {
                 try {
                     await signOut(auth);
-                    adminLoginForm.reset();
                 } catch (error) {
                     console.error('Logout error:', error);
                 }
             });
         }
 
-        function showAdminError(message) {
-            adminLoginError.textContent = message;
-            adminLoginError.style.display = 'block';
-        }
+        // Global showAlert function
+        window.showAlert = function (message, type = 'success') {
+            const alertEl = document.getElementById('alert');
+            if (!alertEl) return;
+            alertEl.textContent = message;
+            alertEl.style.display = 'block';
+            alertEl.className = 'alert show alert-' + (type === 'error' ? 'error' : 'success');
+            setTimeout(() => {
+                alertEl.style.display = 'none';
+                alertEl.className = 'alert';
+            }, 5000);
+        };
     </script>
     <style>
+        :root {
+            --primary: #0ea5e9;
+            --primary-glow: rgba(14, 165, 233, 0.4);
+            --secondary: #6366f1;
+            --accent: #a855f7;
+            --bg-dark: #020617;
+            --card-bg: rgba(15, 23, 42, 0.45);
+            --sidebar-bg: rgba(2, 6, 23, 0.9);
+            --text-main: #f8fafc;
+            --text-dim: #64748b;
+            --border: rgba(148, 163, 184, 0.1);
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(160deg, #1860ad 0%, #124483 100%);
-            color: #f8fafc;
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
         }
 
-        .admin-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        #admin-particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: transparent;
         }
 
-        .admin-header {
-            background: linear-gradient(135deg, rgba(15, 74, 136, 0.98) 0%, rgba(13, 56, 105, 0.95) 100%);
-            padding: 30px;
-            border-radius: 18px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
         }
 
-        .admin-header h1 {
-            font-size: 32px;
-            background: linear-gradient(120deg, #38bdf8 0%, #c084fc 50%, #f472b6 100%);
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        .sidebar-brand i {
+            font-size: 28px;
+            color: var(--primary);
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
+
+        .sidebar-brand span {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
         }
 
-        .admin-header p {
-            color: rgba(226, 232, 240, 0.7);
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-weight: 500;
             font-size: 14px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            background: transparent;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
         }
 
-        .section {
-            background: linear-gradient(160deg, rgba(18, 85, 154, 0.9) 0%, rgba(13, 56, 105, 0.88) 100%);
-            border: 1px solid rgba(148, 163, 184, 0.28);
-            padding: 28px;
-            border-radius: 22px;
+        .nav-link i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link:hover i {
+            color: var(--primary);
+            filter: drop-shadow(0 0 5px var(--primary-glow));
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.1) 0%, transparent 100%);
+            border-left: 3px solid var(--primary);
+            padding-left: 13px;
+            /* account for border */
+            box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.05);
+        }
+
+        .nav-link.active i {
+            color: var(--primary);
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .page-title p {
+            color: var(--text-dim);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* --- Components --- */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
             margin-bottom: 30px;
-            box-shadow: 0 24px 48px rgba(8, 30, 60, 0.4);
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+        }
+
+        .card:hover {
+            border-color: rgba(14, 165, 233, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(14, 165, 233, 0.05);
         }
 
         .section h2 {
-            font-size: 22px;
-            color: #6bb0ff;
-            margin-bottom: 20px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            color: #fff;
+        }
+
+        .section h2 i {
+            color: var(--primary);
         }
 
         .form-group {
@@ -193,424 +325,182 @@
 
         .form-group label {
             display: block;
+            font-size: 13px;
             font-weight: 600;
-            color: #e2e8f0;
+            color: var(--text-dim);
             margin-bottom: 8px;
-            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-control {
             width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 12px 16px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px;
-            background: rgba(10, 40, 75, 0.75);
-            color: #f1f5f9;
+            color: var(--text-main);
             font-size: 14px;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-control:focus {
             outline: none;
-            border-color: rgba(107, 176, 255, 0.85);
-            box-shadow: 0 0 0 3px rgba(107, 176, 255, 0.18);
-            background: rgba(6, 30, 60, 0.92);
-        }
-
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+            background: rgba(15, 23, 42, 1);
         }
 
         .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.25s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #163f6d 0%, #12559a 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes pulse-neon {
+            0% {
+                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(14, 165, 233, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+            }
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 18px 38px rgba(37, 99, 235, 0.5);
+            transform: translateY(-2px) scale(1.02);
+            filter: brightness(1.2);
+            animation: pulse-neon 1.5s infinite;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
+        }
+
+        .btn-primary:hover::after {
+            opacity: 1;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
+            background: #10b981;
+            color: #fff;
         }
 
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 18px 38px rgba(34, 197, 94, 0.5);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
         .btn-danger:hover {
+            background: #ef4444;
+            color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 18px 38px rgba(239, 68, 68, 0.5);
         }
 
-        .emote-grid {
+        .btn-warning {
+            background: #f59e0b;
+            color: #fff;
+        }
+
+        .btn-info {
+            background: #6366f1;
+            color: #fff;
+        }
+
+        /* Lists and Grids */
+        .key-list-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
         }
 
-        .emote-card {
-            background: rgba(17, 65, 120, 0.6);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(148, 163, 184, 0.2);
+        .key-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s ease;
         }
 
-        .emote-card input {
-            margin-bottom: 8px;
+        .key-card:hover {
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.6);
         }
 
-        .emote-admin-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 18px;
-            align-items: flex-end;
-            margin-bottom: 24px;
-        }
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
 
-        .emote-search-group {
-            flex: 1 1 260px;
-        }
+            .sidebar.active {
+                transform: translateX(0);
+            }
 
-        .emote-search-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            border-radius: 14px;
-            border: 1px solid rgba(148, 163, 184, 0.14);
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 41, 59, 0.84) 100%);
-            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.32);
-        }
-
-        .emote-search-container i {
-            font-size: 18px;
-            color: #6bb0ff;
-        }
-
-        .emote-search-container input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            color: #e2e8f0;
-            font-size: 0.95rem;
-            padding: 6px 0;
-        }
-
-        .emote-search-container input::placeholder {
-            color: rgba(148, 163, 184, 0.6);
-        }
-
-        .emote-search-container input:focus {
-            outline: none;
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                width: 100%;
+            }
         }
 
         .emote-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px;
-            position: relative;
-            z-index: 1;
         }
 
         .emote-item {
-            background: linear-gradient(160deg, rgba(16, 60, 110, 0.92) 0%, rgba(13, 50, 95, 0.88) 100%);
-            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: var(--card-bg);
+            border: 1px solid var(--border);
             border-radius: 18px;
-            box-shadow: 0 22px 42px rgba(8, 30, 60, 0.3);
-            padding: 24px 20px 20px;
+            padding: 24px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             gap: 14px;
-            position: relative;
-            transition: border-color 0.25s ease, box-shadow 0.25s ease;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.25s ease;
         }
 
-        .emote-item:focus-within,
         .emote-item:hover {
-            border-color: rgba(107, 176, 255, 0.8);
-            box-shadow: 0 26px 48px rgba(107, 176, 255, 0.25);
-        }
-
-        .emote-item img {
-            width: 88px;
-            height: 88px;
-            object-fit: contain;
-        }
-
-        .emote-details {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .emote-name {
-            font-weight: 600;
-            font-size: 1em;
-            color: #e2e8f0;
-            letter-spacing: 0.4px;
-        }
-
-        .emote-id {
-            color: #94a3b8;
-            margin: 0;
-            font-size: 0.82em;
-        }
-
-        .emote-category-tag {
-            color: #6bb0ff;
-            font-size: 0.75em;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .send-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 12px 18px;
-            background: linear-gradient(135deg, rgba(107, 176, 255, 0.95) 0%, rgba(22, 63, 109, 0.95) 100%);
-            color: white;
-            border: 1px solid transparent;
-            border-radius: 14px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 700;
-            transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
-            box-shadow: 0 16px 34px rgba(37, 99, 235, 0.35);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 0.82rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .send-button:hover:not(:disabled) {
-            border-color: rgba(56, 189, 248, 0.65);
-            box-shadow: 0 20px 38px rgba(37, 99, 235, 0.45);
-        }
-
-        .send-button:disabled {
-            background: rgba(71, 85, 105, 0.65);
-            color: #cbd5f5;
-            border-color: rgba(148, 163, 184, 0.2);
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        .admin-emote-actions {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            display: flex;
-            gap: 8px;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .emote-item:hover .admin-emote-actions,
-        .emote-item:focus-within .admin-emote-actions {
-            opacity: 1;
-        }
-
-        .admin-emote-action-btn {
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            border: 1px solid rgba(148, 163, 184, 0.25);
-            background: rgba(10, 40, 75, 0.8);
-            color: #cbd5f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .admin-emote-action-btn.edit:hover {
-            color: #38bdf8;
-            border-color: rgba(56, 189, 248, 0.45);
-        }
-
-        .admin-emote-action-btn.delete:hover {
-            color: #f87171;
-            border-color: rgba(248, 113, 113, 0.45);
-        }
-
-        @media (max-width: 768px) {
-            .emote-admin-toolbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .emote-list {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 14px;
-            }
-
-            .emote-item {
-                padding: 20px 16px 16px;
-            }
-
-            .emote-item img {
-                width: 62px;
-                height: 62px;
-            }
-
-            .send-button {
-                padding: 10px 12px;
-                font-size: 0.75rem;
-                gap: 6px;
-            }
-        }
-
-        .alert {
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert-success {
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.4);
-            color: #4ade80;
-        }
-
-        .alert-error {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            color: #f87171;
-        }
-
-        .notification-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .notification-item {
-            background: rgba(17, 65, 120, 0.6);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(148, 163, 184, 0.2);
-        }
-
-        .tab {
-            padding: 12px 20px;
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            font-weight: 600;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .tab.active {
-            color: #6bb0ff;
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #6bb0ff, #12559a);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .admin-nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: linear-gradient(135deg, rgba(15, 74, 136, 0.98) 0%, rgba(13, 56, 105, 0.95) 100%);
-            border-radius: 18px;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-btn {
-            padding: 8px 12px;
-            background: rgba(17, 65, 120, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #e2e8f0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 11px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-
-        .nav-btn:hover {
-            background: rgba(107, 176, 255, 0.2);
-            border-color: rgba(107, 176, 255, 0.5);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(107, 176, 255, 0.3);
-        }
-
-        .nav-btn.active {
-            background: linear-gradient(135deg, #163f6d 0%, #12559a 100%);
-            color: white;
-            border-color: transparent;
+            border-color: var(--primary);
+            transform: translateY(-5px);
         }
 
         .user-card {
@@ -629,6 +519,206 @@
         .user-card.expired {
             border-color: rgba(245, 158, 11, 0.5);
             background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(2, 6, 23, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(56, 189, 248, 0.5);
+        }
+
+        /* --- Stats Widgets --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transition: 0.6s;
+        }
+
+        .stat-card:hover::after {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-7px) scale(1.02);
+            border-color: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(14, 165, 233, 0.08);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.1);
+            flex-shrink: 0;
+        }
+
+        .stat-info .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-info .stat-label {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        /* --- Animations --- */
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .content-section {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        /* Badge Styles */
+        @keyframes pulse-text {
+            0% {
+                transform: scale(1);
+                color: #fff;
+            }
+
+            50% {
+                transform: scale(1.15);
+                color: var(--primary);
+                text-shadow: 0 0 10px var(--primary-glow);
+            }
+
+            100% {
+                transform: scale(1);
+                color: #fff;
+            }
+        }
+
+        .pulse-text {
+            animation: pulse-text 0.6s ease;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-online {
+            background: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-online::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px #4ade80;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
         }
 
         .user-info-row {
@@ -695,740 +785,431 @@
         }
 
         /* --- New Admin Login Modal Styles --- */
-        .login-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(11, 17, 32, 0.98);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-
-        .login-wrapper {
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .login-container {
-            width: 900px;
-            height: 550px;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 40px 60px rgba(8, 30, 60, 0.4);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            text-align: left;
-        }
-
-        .login-shape {
-            position: absolute;
-            border-radius: 50%;
-        }
-
-        .shape-large-top {
-            width: 800px;
-            height: 800px;
-            background: #12559a;
-            top: -200px;
-            left: -280px;
-            z-index: 1;
-        }
-
-        .shape-bottom-left {
-            width: 350px;
-            height: 350px;
-            background: #0f4a88;
-            bottom: -100px;
-            left: -150px;
-            z-index: 2;
-        }
-
-        .shape-sphere-mid {
-            width: 220px;
-            height: 220px;
-            background: radial-gradient(circle at 35% 30%, #4b9ded 0%, #1558a5 70%, #0d468e 100%);
-            bottom: 30px;
-            left: 270px;
-            z-index: 3;
-            box-shadow: -10px 15px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .shape-sphere-bottom-right {
-            width: 160px;
-            height: 160px;
-            background: radial-gradient(circle at 35% 30%, #4b9ded 0%, #1558a5 70%, #0d468e 100%);
-            bottom: -60px;
-            right: -40px;
-            z-index: 10;
-            box-shadow: -5px 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .login-left {
-            width: 45%;
-            position: relative;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            padding: 60px;
-            pointer-events: none;
-        }
-
-        .welcome-block {
-            max-width: 280px;
-        }
-
-        .welcome-block h1 {
-            color: #ffffff;
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            background: none;
-            -webkit-text-fill-color: initial;
-        }
-
-        .welcome-block h3 {
-            color: #ffffff;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            opacity: 0.9;
-        }
-
-        .welcome-block p {
-            color: #ffffff;
-            font-size: 10px;
-            line-height: 1.8;
-            opacity: 0.8;
-            font-weight: 300;
-        }
-
-        .login-right {
-            width: 55%;
-            position: relative;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-        }
-
-        .form-container {
-            width: 100%;
-            max-width: 340px;
-        }
-
-        .form-container .title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1b2128;
-            margin-bottom: 8px;
-        }
-
-        .form-container .subtitle {
-            font-size: 11px;
-            color: #7b8595;
-            margin-bottom: 30px;
-        }
-
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .login-form .input-group {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .login-form .input-group input {
-            width: 100%;
-            padding: 13px 45px 13px 45px;
-            background: #f4f6f9;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #333;
-            outline: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin: 0;
-            box-shadow: none;
-        }
-
-        .login-form .input-group input::placeholder {
-            color: #9ba6b5;
-            font-weight: 500;
-            font-size: 12px;
-        }
-
-        .login-form .input-group input:focus {
-            border-color: #12559a;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(18, 85, 154, 0.1);
-        }
-
-        .login-form .input-icon {
-            position: absolute;
-            left: 17px;
-            color: #1a2235;
-            font-size: 14px;
-            z-index: 2;
-        }
-
-        .show-text {
-            position: absolute;
-            right: 15px;
-            color: #16406e;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            z-index: 2;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 5px;
-            margin-bottom: 15px;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            font-size: 11px;
-            color: #434c5b;
-            font-weight: 500;
-            cursor: pointer;
-            position: relative;
-            padding-left: 22px;
-        }
-
-        .remember-me input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-
-        .checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 14px;
-            width: 14px;
-            background-color: #f4f6f9;
-            border: 1px solid #d4dbe4;
-            border-radius: 3px;
-            transition: all 0.2s ease;
-        }
-
-        .remember-me input:checked~.checkmark {
-            background-color: #12559a;
-            border-color: #12559a;
-        }
-
-        .checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-            left: 4px;
-            top: 1px;
-            width: 3px;
-            height: 7px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-
-        .remember-me input:checked~.checkmark:after {
-            display: block;
-        }
-
-        .forgot-link {
-            font-size: 11px;
-            color: #4b8ce2;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .forgot-link:hover {
-            text-decoration: underline;
-        }
-
-        .btn-login-submit {
-            width: 100%;
-            padding: 13px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            background: #163f6d;
-            color: #ffffff;
-            box-shadow: 0 5px 15px rgba(22, 63, 109, 0.3);
-        }
-
-        .btn-login-submit:hover {
-            background: #0f2c4e;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(22, 63, 109, 0.4);
-            color: white;
-        }
-
-        .login-divider {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 15px 0;
-        }
-
-        .login-divider::before,
-        .login-divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #e0e6ed;
-        }
-
-        .login-divider span {
-            padding: 0 10px;
-            color: #9ba6b5;
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .btn-outline-login {
-            width: 100%;
-            padding: 13px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #ffffff;
-            color: #1b2128;
-            border: 1.5px solid #1b2128;
-        }
-
-        .btn-outline-login:hover {
-            background: #f4f6f9;
-        }
-
-        .signup-text {
-            text-align: center;
-            font-size: 11px;
-            color: #7b8595;
-            margin-top: 15px;
-        }
-
-        .signup-text a {
-            color: #163f6d;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .signup-text a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 
 <body>
-    <!-- Admin Login Modal -->
-    <div id="admin-login-modal" class="login-modal-overlay">
-        <div class="login-wrapper">
-            <div class="login-container">
-                <!-- Decorative Blue Circles -->
-                <div class="login-shape shape-large-top"></div>
-                <div class="login-shape shape-bottom-left"></div>
-                <div class="login-shape shape-sphere-mid"></div>
-                <div class="login-shape shape-sphere-bottom-right"></div>
+    <div id="admin-particles-js"></div>
 
-                <!-- Left Side Data -->
-                <div class="login-left">
-                    <div class="welcome-block">
-                        <h1>WELCOME</h1>
-                        <h3>PRIME-X OFFICIAL</h3>
-                        <p>ওয়েবসাইট ম্যানেজমেন্ট প্যানেল। শুধুমাত্র এডমিনরা এক্সেস পাবেন।</p>
+    <div class="admin-layout" id="admin-container" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-shield-alt"></i>
+                <span>PRIME-X CORE</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-link active" onclick="showSection('key-management')">
+                    <i class="fas fa-key"></i> Key Management
+                </button>
+                <button class="nav-link" onclick="showSection('emote-management')">
+                    <i class="fas fa-smile"></i> Emote Control
+                </button>
+                <button class="nav-link" onclick="showSection('announcement')">
+                    <i class="fas fa-bullhorn"></i> Announcements
+                </button>
+                <button class="nav-link" onclick="showSection('social-links')">
+                    <i class="fas fa-link"></i> Social Links
+                </button>
+                <button class="nav-link" onclick="showSection('header-settings')">
+                    <i class="fas fa-heading"></i> Site Header
+                </button>
+                <button class="nav-link" onclick="showSection('notifications')">
+                    <i class="fas fa-bell"></i> Notifications
+                </button>
+                <button class="nav-link" onclick="showSection('category-management')">
+                    <i class="fas fa-folder"></i> Categories
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="nav-link" style="color: #f87171;">
+                    <i class="fas fa-sign-out-alt"></i> Logout System
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1 id="current-section-title">Systems Intelligence</h1>
+                    <p id="current-section-desc">Unified control center for PRIME-X core assets</p>
+                </div>
+                <div class="user-profile" style="display: flex; align-items: center; gap: 15px;">
+                    <div style="text-align: right;">
+                        <div style="font-size: 14px; font-weight: 600; color: #fff;">ADMIN_SHANTO</div>
+                        <div class="status-badge status-online">SECURE SESSION</div>
+                    </div>
+                    <div
+                        style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); border: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #fff;">
+                        <i class="fas fa-user-shield"></i>
                     </div>
                 </div>
+            </header>
 
-                <!-- Right Side Login Form -->
-                <div class="login-right">
-                    <div class="form-container">
-                        <h2 class="title">Sign in</h2>
-                        <p class="subtitle">লগইন করুন আপনার এক্সেস পেতে</p>
+            <!-- Stats Overview Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-server"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value">ONLINE</div>
+                        <div class="stat-label">System Status</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: #fbd38d;"><i class="fas fa-key"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-total-keys">...</div>
+                        <div class="stat-label">Total Licenses</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: #c084fc;"><i class="fas fa-bolt"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-active-sessions">324</div>
+                        <div class="stat-label">Active Agents</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: #f472b6;"><i class="fas fa-fire"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-total-emotes">...</div>
+                        <div class="stat-label">Loaded Assets</div>
+                    </div>
+                </div>
+            </div>
 
-                        <div id="admin-login-error"
-                            style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; padding: 12px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-size: 13px;">
+            <div id="alert" class="alert"></div>
+
+            <!-- Key Management Section (Default) -->
+            <div class="section card content-section" id="key-management-section">
+                <div class="section-header"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2 style="margin-bottom: 0;"><i class="fas fa-key"></i> ইউজার কী ম্যানেজমেন্ট</h2>
+                    <span class="badge"
+                        style="background: rgba(56, 189, 248, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid rgba(56, 189, 248, 0.2);">
+                        System Active
+                    </span>
+                </div>
+
+                <!-- Create Key Form Container -->
+                <div class="card"
+                    style="background: rgba(56, 189, 248, 0.03); border: 1px dashed rgba(56, 189, 248, 0.3); margin-bottom: 40px;">
+                    <h3
+                        style="color: #fff; font-size: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-plus-circle" style="color: var(--primary);"></i> নতুন Key তৈরি করুন
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+
+                        <div class="form-group">
+                            <label>ইউজারের ইমেইল (ঐচ্ছিক)</label>
+                            <input type="email" class="form-control" id="key-user-email" placeholder="user@email.com">
                         </div>
+                        <div class="form-group">
+                            <label>Plan টাইপ</label>
+                            <select id="key-plan" class="form-control">
+                                <option value="Free">Free Plan</option>
+                                <option value="Pro">Pro Plan</option>
+                                <option value="Elite">Elite Plan</option>
+                                <option value="Lifetime">Lifetime Plan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Device ID (Fingerprint)</label>
+                            <input type="text" class="form-control" id="key-hwid"
+                                placeholder="ফাঁকা রাখুন (প্রথম লগইনে অটো-লক হবে)">
+                        </div>
+                        <div class="form-group">
+                            <label>মেয়াদ (Duration)</label>
+                            <select id="key-expiry-duration" class="form-control"
+                                onchange="toggleCustomDate(this.value)">
+                                <option value="0">Lifetime (No Expiry)</option>
+                                <option value="1h">1 Hour (Trial)</option>
+                                <option value="24h">24 Hours (1 Day)</option>
+                                <option value="3d">3 Days</option>
+                                <option value="7d">7 Days (1 Week)</option>
+                                <option value="30d">30 Days (1 Month)</option>
+                                <option value="custom">Custom Date Selection</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="custom-date-container" style="display: none;">
+                            <label>শেষ তারিখ</label>
+                            <input type="date" class="form-control" id="key-custom-date">
+                        </div>
+                    </div>
 
-                        <form id="admin-login-form" class="login-form">
-                            <div class="input-group">
-                                <i class="fa-solid fa-user input-icon"></i>
-                                <input type="email" id="admin-email" placeholder="Admin Email" required>
-                            </div>
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label>জেনারেটেড Key</label>
+                        <div style="display: flex; gap: 12px;">
+                            <input type="text" class="form-control" id="generated-key-display"
+                                placeholder="PRIME-XXXX-XXXX-XXXX"
+                                style="font-family: 'JetBrains Mono', monospace; font-weight: 600; letter-spacing: 1px; flex: 1; text-align: center; border-color: rgba(56, 189, 248, 0.4);">
+                            <button class="btn btn-info" onclick="generateRandomKey()" style="padding: 0 20px;">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
 
-                            <div class="input-group">
-                                <i class="fa-solid fa-lock input-icon"></i>
-                                <input type="password" placeholder="Password" id="admin-password" required>
-                                <span class="show-text" id="togglePassword">SHOW</span>
-                            </div>
+                    <div style="display: flex; gap: 15px; margin-top: 25px;">
+                        <button class="btn btn-primary" id="save-key-btn" onclick="saveNewKey()" style="flex: 2;">
+                            <i class="fas fa-save"></i> Key সেভ করুন
+                        </button>
+                        <button class="btn btn-danger" id="cancel-edit-btn" onclick="cancelEdit()"
+                            style="flex: 1; display: none;">
+                            <i class="fas fa-times"></i> বাতিল
+                        </button>
+                    </div>
+                </div>
 
-                            <div class="form-actions">
-                                <label class="remember-me">
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                    Remember me
-                                </label>
-                                <a href="#" class="forgot-link">Forgot Password?</a>
-                            </div>
-
-                            <button type="submit" class="btn-login-submit">Sign in</button>
-
-                            <div class="login-divider">
-                                <span>or</span>
-                            </div>
-
-                            <button type="button" class="btn-outline-login">Sign in with other</button>
-
-                            <p class="signup-text">
-                                Don't have an account? <a href="#">Sign up</a>
-                            </p>
-                        </form>
+                <div class="section-header" style="margin-bottom: 25px;">
+                    <h3><i class="fas fa-list-ul"></i> একটিভ কী ড্যাশবোর্ড</h3>
+                </div>
+                <div id="key-list-container" class="key-list-grid">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px;">
+                        <i class="fas fa-circle-notch fa-spin"
+                            style="font-size: 32px; color: var(--primary); margin-bottom: 15px;"></i>
+                        <p style="color: var(--text-dim);">Firebase থেকে ডাটা লোড হচ্ছে...</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <script>
-        document.getElementById('togglePassword').addEventListener('click', function () {
-            const passwordInput = document.getElementById('admin-password');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.textContent = type === 'password' ? 'SHOW' : 'HIDE';
-        });
-    </script>
 
-    <div class="admin-container" id="admin-container" style="display: none;">
-        <div class="admin-header">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                <div>
-                    <h1><i class="fas fa-shield-alt"></i> Admin Panel</h1>
-                    <p>PRIME-X OFFICIAL ওয়েবসাইট ম্যানেজমেন্ট প্যানেল</p>
+            <!-- Social Links Section -->
+            <div class="section card content-section" id="social-links-section" style="display: none;">
+                <h2><i class="fas fa-link"></i> সোশ্যাল লিংক ম্যানেজমেন্ট</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="form-group">
+                        <label>YouTube লিংক</label>
+                        <input type="url" class="form-control" id="youtube-link" placeholder="https://youtube.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label>Discord লিংক</label>
+                        <input type="url" class="form-control" id="discord-link" placeholder="https://discord.gg/...">
+                    </div>
+                    <div class="form-group">
+                        <label>Telegram লিংক</label>
+                        <input type="url" class="form-control" id="telegram-link" placeholder="https://t.me/...">
+                    </div>
+                    <div class="form-group">
+                        <label>Website লিংক (Shop)</label>
+                        <input type="url" class="form-control" id="website-link" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp লিংক</label>
+                        <input type="url" class="form-control" id="whatsapp-link" placeholder="https://wa.link/...">
+                    </div>
                 </div>
-                <button id="logout-btn" class="btn btn-danger" style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-sign-out-alt"></i> লগআউট
-                </button>
-            </div>
-        </div>
-
-        <!-- Navigation Buttons -->
-        <div class="admin-nav">
-            <button class="nav-btn active" onclick="showSection('social-links')">
-                <i class="fas fa-link"></i> SOCIAL LINKS
-            </button>
-            <button class="nav-btn" onclick="showSection('header-settings')">
-                <i class="fas fa-heading"></i> HEADER SETTINGS
-            </button>
-            <button class="nav-btn" onclick="showSection('announcement')">
-                <i class="fas fa-bullhorn"></i> ANNOUNCEMENT
-            </button>
-            <button class="nav-btn" onclick="showSection('notifications')">
-                <i class="fas fa-bell"></i> NOTIFICATIONS
-            </button>
-            <button class="nav-btn" onclick="showSection('emote-management')">
-                <i class="fas fa-smile"></i> EMOTE MANAGEMENT
-            </button>
-            <button class="nav-btn" onclick="showSection('category-management')">
-                <i class="fas fa-folder"></i> CATEGORY MANAGEMENT
-            </button>
-        </div>
-
-        <div id="alert" class="alert"></div>
-
-        <!-- Social Links Section -->
-        <div class="section" id="social-links-section">
-            <h2><i class="fas fa-link"></i> সোশ্যাল লিংক ম্যানেজমেন্ট</h2>
-            <div class="form-group">
-                <label>YouTube লিংক</label>
-                <input type="url" id="youtube-link"
-                    placeholder="https://youtube.com/@primexofficial-g4m?si=7Chr0KpuFt0kWdRA">
-            </div>
-            <div class="form-group">
-                <label>Discord লিংক</label>
-                <input type="url" id="discord-link" placeholder="https://discord.gg/FCUztBgvCJ">
-            </div>
-            <div class="form-group">
-                <label>Telegram লিংক</label>
-                <input type="url" id="telegram-link" placeholder="https://t.me/+3RV4xVB8aQYwZTc9">
-            </div>
-            <div class="form-group">
-                <label>Website লিংক (Shop)</label>
-                <input type="url" id="website-link" placeholder="https://prime-x-official.netlify.app/">
-            </div>
-            <div class="form-group">
-                <label>WhatsApp লিংক</label>
-                <input type="url" id="whatsapp-link" placeholder="https://wa.link/kzfxli">
-            </div>
-            <button class="btn btn-primary" onclick="saveSocialLinks()">
-                <i class="fas fa-save"></i> সোশ্যাল লিংক সেভ করুন
-            </button>
-        </div>
-
-        <!-- Header Settings Section -->
-        <div class="section" id="header-settings-section" style="display: none;">
-            <h2><i class="fas fa-heading"></i> হেডার সেটিংস</h2>
-            <div class="form-group">
-                <label>লোগো ইমেজ URL</label>
-                <input type="url" id="logo-url" placeholder="https://i.ibb.co/zWCYFszJ/Np-logo-abstrac.jpg">
-            </div>
-            <div class="form-group">
-                <label>ওয়েবসাইট নাম</label>
-                <input type="text" id="website-name" placeholder="PRIME-X OFFICIAL">
-            </div>
-            <div class="form-group">
-                <label>ওয়েবসাইট সাবটাইটেল</label>
-                <input type="text" id="website-subtitle" placeholder="PRIME-X OFFICIAL WEBSITE">
-            </div>
-            <div class="form-group">
-                <label>ডেভেলপার নাম (User ID Section-এ Scroll করবে)</label>
-                <input type="text" id="developer-name" placeholder="Developed by PRIME-X OFFICIAL">
-                <small style="color: rgba(148, 163, 184, 0.7); font-size: 12px;">এই টেক্সট User ID section-এর ভিতরে ডান
-                    থেকে বামে scroll করবে</small>
-            </div>
-            <div class="form-group">
-                <label>ডেভেলপার নামের রঙ</label>
-                <input type="color" id="developer-name-color" value="#38bdf8">
-                <small style="color: rgba(148, 163, 184, 0.7); font-size: 12px;">ডেভেলপার নামের text color</small>
-            </div>
-            <div class="form-group">
-                <label>Scroll Speed (সেকেন্ড)</label>
-                <input type="number" id="developer-name-speed" min="5" max="60" value="25" step="1">
-                <small style="color: rgba(148, 163, 184, 0.7); font-size: 12px;">Scroll animation-এর duration (5-60
-                    সেকেন্ড)</small>
-            </div>
-            <button class="btn btn-primary" onclick="saveHeaderSettings()">
-                <i class="fas fa-save"></i> হেডার সেটিংস সেভ করুন
-            </button>
-        </div>
-
-        <!-- Announcement Section -->
-        <div class="section" id="announcement-section" style="display: none;">
-            <h2><i class="fas fa-bullhorn"></i> এনাউন্সমেন্ট ম্যানেজমেন্ট</h2>
-            <div class="form-group">
-                <label>এনাউন্সমেন্ট টেক্সট</label>
-                <textarea id="announcement-text"
-                    placeholder="🎉 স্বাগতম নেশনাল কমিউনিটিতে! সর্বশেষ আপডেট এবং টুলস পেতে আমাদের সাথে থাকুন। 🎉"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Scroll Speed (সেকেন্ড)</label>
-                <input type="number" id="announcement-speed" min="10" max="120" value="30" step="1">
-                <small style="color: rgba(148, 163, 184, 0.7); font-size: 12px;">Announcement scroll animation-এর
-                    duration (10-120 সেকেন্ড)</small>
-            </div>
-            <div class="form-group">
-                <label>Text Color (লাল, নীল, সবুজ, RGB সহ বিভিন্ন রঙ)</label>
-                <select id="announcement-text-color" class="form-control"
-                    style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); color: #f1f5f9;">
-                    <option value="#ffffff">⚪ সাদা (White) - #ffffff</option>
-                    <option value="#ff0000">🔴 লাল (Red) - #ff0000</option>
-                    <option value="#00ff00">🟢 সবুজ (Green) - #00ff00</option>
-                    <option value="#0000ff">🔵 নীল (Blue) - #0000ff</option>
-                    <option value="#ffff00">🟡 হলুদ (Yellow) - #ffff00</option>
-                    <option value="#ff00ff">🟣 ম্যাজেন্টা (Magenta) - #ff00ff</option>
-                    <option value="#00ffff">🔷 সায়ান (Cyan) - #00ffff</option>
-                    <option value="#ffa500">🟠 কমলা (Orange) - #ffa500</option>
-                    <option value="#800080">🟣 বেগুনি (Purple) - #800080</option>
-                    <option value="#ff1493">💗 গোলাপি (Pink) - #ff1493</option>
-                    <option value="#00ced1">🔵 ডার্ক টারকোয়াজ (Dark Turquoise) - #00ced1</option>
-                    <option value="#32cd32">🟢 লাইম গ্রিন (Lime Green) - #32cd32</option>
-                    <option value="#ff4500">🟠 অরেঞ্জ রেড (Orange Red) - #ff4500</option>
-                    <option value="#1e90ff">🔵 ডজার ব্লু (Dodger Blue) - #1e90ff</option>
-                    <option value="#ff6347">🟠 টমেটো (Tomato) - #ff6347</option>
-                    <option value="#7cfc00">🟢 লন গ্রিন (Lawn Green) - #7cfc00</option>
-                    <option value="#ffd700">🟡 গোল্ড (Gold) - #ffd700</option>
-                    <option value="#40e0d0">🔵 টারকোয়াজ (Turquoise) - #40e0d0</option>
-                    <option value="#ee82ee">🟣 ভায়োলেট (Violet) - #ee82ee</option>
-                    <option value="#ff69b4">💗 হট পিঙ্ক (Hot Pink) - #ff69b4</option>
-                    <option value="#00ff7f">🟢 স্প্রিং গ্রিন (Spring Green) - #00ff7f</option>
-                    <option value="#1e90ff">🔵 ডিপ স্কাই ব্লু (Deep Sky Blue) - #1e90ff</option>
-                    <option value="#ff1493">💗 ডিপ পিঙ্ক (Deep Pink) - #ff1493</option>
-                    <option value="#00bfff">🔵 ডিপ স্কাই ব্লু (Deep Sky Blue) - #00bfff</option>
-                    <option value="#7fff00">🟢 চার্ট্রিউজ (Chartreuse) - #7fff00</option>
-                    <option value="#ff00ff">🟣 ফুশিয়া (Fuchsia) - #ff00ff</option>
-                    <option value="#00ffff">🔷 অ্যাকুয়া (Aqua) - #00ffff</option>
-                    <option value="#ff8c00">🟠 ডার্ক অরেঞ্জ (Dark Orange) - #ff8c00</option>
-                    <option value="#8b008b">🟣 ডার্ক ম্যাজেন্টা (Dark Magenta) - #8b008b</option>
-                    <option value="#2e8b57">🟢 সি গ্রিন (Sea Green) - #2e8b57</option>
-                    <option value="#4169e1">🔵 রয়্যাল ব্লু (Royal Blue) - #4169e1</option>
-                    <option value="#dc143c">🔴 ক্রিমসন (Crimson) - #dc143c</option>
-                    <option value="#20b2aa">🔵 লাইট সি গ্রিন (Light Sea Green) - #20b2aa</option>
-                    <option value="#9370db">🟣 মিডিয়াম পার্পল (Medium Purple) - #9370db</option>
-                    <option value="#3cb371">🟢 মিডিয়াম সি গ্রিন (Medium Sea Green) - #3cb371</option>
-                    <option value="#ff1493">💗 ডিপ পিঙ্ক (Deep Pink) - #ff1493</option>
-                    <option value="#00ced1">🔵 ডার্ক টারকোয়াজ (Dark Turquoise) - #00ced1</option>
-                    <option value="#ff69b4">💗 হট পিঙ্ক (Hot Pink) - #ff69b4</option>
-                    <option value="#00ff7f">🟢 স্প্রিং গ্রিন (Spring Green) - #00ff7f</option>
-                    <option value="#1e90ff">🔵 ডজার ব্লু (Dodger Blue) - #1e90ff</option>
-                    <option value="#ff6347">🟠 টমেটো (Tomato) - #ff6347</option>
-                    <option value="#7cfc00">🟢 লন গ্রিন (Lawn Green) - #7cfc00</option>
-                    <option value="#ffd700">🟡 গোল্ড (Gold) - #ffd700</option>
-                    <option value="#40e0d0">🔵 টারকোয়াজ (Turquoise) - #40e0d0</option>
-                    <option value="#ee82ee">🟣 ভায়োলেট (Violet) - #ee82ee</option>
-                    <option value="#38bdf8">🔵 স্কাই ব্লু (Sky Blue) - #38bdf8</option>
-                    <option value="#6366f1">🟣 ইন্ডিগো (Indigo) - #6366f1</option>
-                    <option value="#f472b6">💗 পিঙ্ক (Pink) - #f472b6</option>
-                    <option value="rgb-animated">🌈 RGB Animated (সব রঙের মধ্যে পরিবর্তন হবে)</option>
-                </select>
-                <small style="color: rgba(148, 163, 184, 0.7); font-size: 11px; display: block; margin-top: 5px;">কম্বো
-                    বক্স থেকে আপনার পছন্দের রঙ সিলেক্ট করুন (RGB সহ সমস্ত রঙ)</small>
-            </div>
-            <button class="btn btn-success" onclick="saveAnnouncement()">
-                <i class="fas fa-broadcast-tower"></i> এনাউন্সমেন্ট সেভ করুন
-            </button>
-        </div>
-
-        <!-- Bell Notification Section -->
-        <div class="section" id="notifications-section" style="display: none;">
-            <h2><i class="fas fa-bell"></i> বেল নোটিফিকেশন ম্যানেজমেন্ট</h2>
-            <div class="form-group">
-                <label>টার্গেট ইউজার</label>
-                <select id="notification-target">
-                    <option value="all">সবাইকে পাঠান</option>
-                    <option value="specific">নির্দিষ্ট ইউজারকে পাঠান</option>
-                </select>
-            </div>
-            <div class="form-group" id="specific-email-group" style="display: none;">
-                <label>ইউজার ইমেইল</label>
-                <input type="email" id="target-user-email" placeholder="user@example.com">
-            </div>
-            <div class="form-group">
-                <label>নোটিফিকেশন টাইটেল</label>
-                <input type="text" id="notification-title" placeholder="নতুন আপডেট!">
-            </div>
-            <div class="form-group">
-                <label>নোটিফিকেশন মেসেজ</label>
-                <textarea id="notification-message" placeholder="আপনার নোটিফিকেশন মেসেজ এখানে লিখুন..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>নোটিফিকেশন টাইপ</label>
-                <select id="notification-type">
-                    <option value="info">তথ্য (Info)</option>
-                    <option value="success">সাফল্য (Success)</option>
-                    <option value="warning">সতর্কতা (Warning)</option>
-                    <option value="error">ত্রুটি (Error)</option>
-                </select>
-            </div>
-            <button class="btn btn-success" onclick="sendNotification()">
-                <i class="fas fa-paper-plane"></i> নোটিফিকেশন পাঠান
-            </button>
-
-            <h3 style="margin-top: 30px; margin-bottom: 15px; color: #94a3b8;">পূর্ববর্তী নোটিফিকেশন</h3>
-            <div class="notification-list" id="notification-list">
-                <!-- Notifications will be listed here -->
-            </div>
-        </div>
-
-        <!-- Emote Management Section -->
-        <div class="section" id="emote-management-section" style="display: none;">
-            <h2><i class="fas fa-smile"></i> ইমোট ম্যানেজমেন্ট</h2>
-
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('add-emote')">নতুন ইমোট যোগ করুন</button>
-                <button class="tab" onclick="switchTab('view-all-emotes')">সব ইমোট দেখুন</button>
-            </div>
-
-            <!-- Add Emote Tab -->
-            <div id="add-emote" class="tab-content active">
-                <div class="form-group">
-                    <label>ইমোট নাম</label>
-                    <input type="text" id="emote-name" placeholder="উদাহরণ: Cobra Rising">
-                </div>
-                <div class="form-group">
-                    <label>ইমোট ID</label>
-                    <input type="text" id="emote-id" placeholder="উদাহরণ: 909000075">
-                </div>
-                <div class="form-group">
-                    <label>ইমোট ইমেজ URL</label>
-                    <input type="url" id="emote-image" placeholder="https://raw.githubusercontent.com/...">
-                </div>
-                <div class="form-group">
-                    <label>ক্যাটাগরি</label>
-                    <select id="emote-category">
-                        <option value="">All (কোন ক্যাটাগরি নেই)</option>
-                        <option value="EVO">EVO</option>
-                        <option value="Rare Emote">Rare EMOTE</option>
-                        <option value="NOT IN BD SERVER">NOT IN BD SERVER</option>
-                        <option value="HYPER B">HYPER B</option>
-                    </select>
-                </div>
-                <button class="btn btn-success" onclick="addEmote()">
-                    <i class="fas fa-plus"></i> ইমোট যোগ করুন
+                <button class="btn btn-primary" onclick="saveSocialLinks()" style="margin-top: 20px;">
+                    <i class="fas fa-save"></i> সোশ্যাল লিংক সেভ করুন
                 </button>
             </div>
 
-            <!-- View All Emotes Tab (from index.html) -->
-            <div id="view-all-emotes" class="tab-content">
-                <div class="emote-admin-toolbar">
-                    <div class="form-group" style="min-width: 220px;">
-                        <label>ক্যাটাগরি ফিল্টার</label>
-                        <select id="filter-all-category" onchange="filterAllEmotes()">
-                            <option value="">সব ইমোট দেখান</option>
-                            <option value="EVO">EVO</option>
-                            <option value="Rare Emote">Rare EMOTE</option>
-                            <option value="NOT IN BD SERVER">NOT IN BD SERVER</option>
-                            <option value="HYPER B">HYPER B</option>
+            <!-- Header Settings Section -->
+            <div class="section card content-section" id="header-settings-section" style="display: none;">
+                <h2><i class="fas fa-heading"></i> হেডার সেটিংস</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="form-group">
+                        <label>লোগো ইমেজ URL</label>
+                        <input type="url" class="form-control" id="logo-url" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>ওয়েবসাইট নাম</label>
+                        <input type="text" class="form-control" id="website-name" placeholder="PRIME-X OFFICIAL">
+                    </div>
+                    <div class="form-group">
+                        <label>ওয়েবসাইট সাবটাইটেল</label>
+                        <input type="text" class="form-control" id="website-subtitle" placeholder="SUBTITLE">
+                    </div>
+                    <div class="form-group">
+                        <label>ডেভেলপার নাম</label>
+                        <input type="text" class="form-control" id="developer-name">
+                    </div>
+                    <div class="form-group">
+                        <label>Scroll Speed (সেকেন্ড)</label>
+                        <input type="number" class="form-control" id="developer-name-speed" min="5" max="60" value="25">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="saveHeaderSettings()" style="margin-top: 20px;">
+                    <i class="fas fa-save"></i> হেডার সেটিংস সেভ করুন
+                </button>
+            </div>
+
+            <!-- Announcement Section -->
+            <div class="section card content-section" id="announcement-section" style="display: none;">
+                <h2><i class="fas fa-bullhorn"></i> এনাউন্সমেন্ট ম্যানেজমেন্ট</h2>
+                <div class="form-group">
+                    <label>এনাউন্সমেন্ট টেক্সট</label>
+                    <textarea class="form-control" id="announcement-text" style="min-height: 120px;"
+                        placeholder="🎉 স্বাগতম PRIME-X এ! সর্বশেষ আপডেট এবং টুলস পেতে আমাদের সাথে থাকুন। 🎉"></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Scroll Speed (সেকেন্ড)</label>
+                        <input type="number" class="form-control" id="announcement-speed" min="10" max="120" value="30"
+                            step="1">
+                    </div>
+                    <div class="form-group">
+                        <label>টেক্সট কালার ও অ্যানিমেশন</label>
+                        <select id="announcement-text-color" class="form-control">
+                            <option value="#ffffff">⚪ সাদা (White)</option>
+                            <option value="#38bdf8">🔵 স্কাই ব্লু (Sky Blue)</option>
+                            <option value="#ff0000">🔴 লাল (Red)</option>
+                            <option value="#00ff00">🟢 সবুজ (Green)</option>
+                            <option value="#ffff00">🟡 হলুদ (Yellow)</option>
+                            <option value="#f472b6">💗 গোলাপি (Pink)</option>
+                            <option value="rgb-animated">🌈 RGB Animated (Colorful)</option>
                         </select>
                     </div>
-                    <div class="form-group emote-search-group">
-                        <label>ইমোট সার্চ</label>
-                        <div class="emote-search-container">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="admin-emote-search" placeholder="নাম বা ID দিয়ে সার্চ করুন..."
-                                oninput="filterAllEmotes()">
+                </div>
+                <button class="btn btn-success" onclick="saveAnnouncement()">
+                    <i class="fas fa-broadcast-tower"></i> এনাউন্সমেন্ট সেভ করুন
+                </button>
+            </div>
+
+            <!-- Bell Notification Section -->
+            <div class="section card content-section" id="notifications-section" style="display: none;">
+                <h2><i class="fas fa-bell"></i> সিস্টেম নোটিফিকেশন</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>টার্গেট ইউজার</label>
+                        <select id="notification-target" class="form-control">
+                            <option value="all">সবাইকে পাঠান (Broadcast)</option>
+                            <option value="specific">নির্দিষ্ট ইউজারকে পাঠান (Direct)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="specific-email-group" style="display: none;">
+                        <label>ইউজার ইমেইল</label>
+                        <input type="email" class="form-control" id="target-user-email" placeholder="user@example.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>নোটিফিকেশন টাইটেল</label>
+                    <input type="text" class="form-control" id="notification-title" placeholder="নতুন আপডেট!">
+                </div>
+                <div class="form-group">
+                    <label>নোটিফিকেশন মেসেজ</label>
+                    <textarea class="form-control" id="notification-message"
+                        placeholder="আপনার নোটিফিকেশন মেসেজ এখানে লিখুন..." style="min-height: 100px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>নোটিফিকেশন টাইপ</label>
+                    <select id="notification-type" class="form-control">
+                        <option value="info">Information (Blue)</option>
+                        <option value="success">Success (Green)</option>
+                        <option value="warning">Warning (Yellow)</option>
+                        <option value="error">Critical Error (Red)</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="sendNotification()">
+                    <i class="fas fa-paper-plane"></i> নোটিফিকেশন পাঠান
+                </button>
+
+                <h3 style="margin-top: 40px; margin-bottom: 20px; color: var(--text-dim); font-size: 16px;">
+                    <i class="fas fa-history"></i> পূর্ববর্তী নোটিফিকেশন লগ
+                </h3>
+                <div class="notification-list" id="notification-list">
+                    <!-- Notifications will be listed here -->
+                </div>
+            </div>
+
+            <!-- Emote Management Section -->
+            <div class="section card content-section" id="emote-management-section" style="display: none;">
+                <h2><i class="fas fa-smile-beam"></i> ইমোট লাইব্রেরি মডারেটর</h2>
+
+                <div class="tabs" style="margin-bottom: 30px;">
+                    <button class="tab active" onclick="switchTab('add-emote')">নতুন ইমোট যোগ করুন</button>
+                    <button class="tab" onclick="switchTab('view-all-emotes')">সব ইমোট ব্রাউজ করুন</button>
+                </div>
+
+                <!-- Add Emote Tab -->
+                <div id="add-emote" class="tab-content active">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label>ইমোট নাম</label>
+                            <input type="text" class="form-control" id="emote-name" placeholder="উদাহরণ: Cobra Rising">
+                        </div>
+                        <div class="form-group">
+                            <label>ইমোট ID</label>
+                            <input type="text" class="form-control" id="emote-id" placeholder="উদাহরণ: 909000075">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>ইমোট ইমেজ URL</label>
+                        <input type="url" class="form-control" id="emote-image"
+                            placeholder="https://raw.githubusercontent.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label>ট্যাকটিক্যাল ক্যাটাগরি</label>
+                        <select id="emote-category" class="form-control">
+                            <option value="">Default (General)</option>
+                            <option value="EVO">EVO (Legendary)</option>
+                            <option value="Rare Emote">Rare (Limited)</option>
+                            <option value="NOT IN BD SERVER">Exotic (Global Only)</option>
+                            <option value="HYPER B">Vivid (Hyper Book)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="addEmote()" style="width: 100%;">
+                        <i class="fas fa-plus-circle"></i> ইমোট ডেটাবেজে যুক্ত করুন
+                    </button>
+                </div>
+
+                <!-- View All Emotes Tab -->
+                <div id="view-all-emotes" class="tab-content">
+                    <div class="card"
+                        style="background: rgba(15, 23, 42, 0.4); border-color: rgba(56, 189, 248, 0.1); padding: 20px;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                            <div class="form-group" style="flex: 1; min-width: 200px;">
+                                <label>ক্যাটাগরি ফিল্টার</label>
+                                <select id="filter-all-category" class="form-control" onchange="filterAllEmotes()">
+                                    <option value="">সব ইমোট দেখান</option>
+                                    <option value="EVO">EVO Status</option>
+                                    <option value="Rare Emote">Rare Status</option>
+                                    <option value="NOT IN BD SERVER">Global Unlock</option>
+                                    <option value="HYPER B">Hyper Book</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 2; min-width: 300px;">
+                                <label>ট্যাকটিক্যাল সার্চ</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-search"
+                                        style="position: absolute; left: 16px; top: 14px; color: var(--primary);"></i>
+                                    <input type="text" class="form-control" id="admin-emote-search"
+                                        style="padding-left: 45px;" placeholder="Search name or ID..."
+                                        oninput="filterAllEmotes()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="admin-emote-list" class="emote-list" style="margin-top: 25px;"></div>
+                </div>
+            </div>
+
+            <!-- Category Management Section -->
+            <div class="section card content-section" id="category-management-section" style="display: none;">
+                <h2><i class="fas fa-folder-open"></i> ক্যাটাগরি কনফিগারেশন</h2>
+                <div class="card"
+                    style="background: rgba(56, 189, 248, 0.03); border: 1px dashed rgba(56, 189, 248, 0.3);">
+                    <div class="form-group">
+                        <label>নতুন ক্যাটাগরি নাম</label>
+                        <div style="display: flex; gap: 12px;">
+                            <input type="text" class="form-control" id="new-category" placeholder="যেমন: Mythic Emotes">
+                            <button class="btn btn-primary" onclick="addCategory()">
+                                <i class="fas fa-plus"></i> যোগ করুন
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div id="admin-emote-list" class="emote-list"></div>
-            </div>
-        </div>
 
-        <!-- Category Management Section -->
-        <div class="section" id="category-management-section" style="display: none;">
-            <h2><i class="fas fa-folder"></i> ক্যাটাগরি ম্যানেজমেন্ট</h2>
-            <div class="form-group">
-                <label>নতুন ক্যাটাগরি নাম</label>
-                <input type="text" id="new-category" placeholder="নতুন ক্যাটাগরি নাম">
+                <h3 style="margin-top: 35px; margin-bottom: 20px; color: var(--text-dim); font-size: 16px;">
+                    <i class="fas fa-tags"></i> বর্তমান সকল ক্যাটাগরি
+                </h3>
+                <div id="category-list"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+                    <!-- Categories will be listed here -->
+                </div>
             </div>
-            <button class="btn btn-primary" onclick="addCategory()">
-                <i class="fas fa-plus"></i> ক্যাটাগরি যোগ করুন
-            </button>
-
-            <h3 style="margin-top: 30px; margin-bottom: 15px; color: #94a3b8;">সব ক্যাটাগরি</h3>
-            <div id="category-list" class="emote-grid">
-                <!-- Categories will be listed here -->
-            </div>
-        </div>
-
+        </main>
     </div>
 
     <script>
@@ -1483,6 +1264,9 @@
             const dbRef = window.firebaseRef;
             const dbOnValue = window.firebaseOnValue;
             const dbSet = window.firebaseSet;
+
+            // Pre-fetch keys immediately so the list is instant when user opens the section
+            setupKeysListener();
 
             // Load Social Links with real-time updates
             dbOnValue(dbRef(db, 'settings/socialLinks'), (snapshot) => {
@@ -1563,9 +1347,11 @@
                     const data = snapshot.val();
                     emotes = Object.keys(data).map(key => ({ ...data[key], firebaseId: key }));
                     adminCustomEmotes = [...emotes];
+                    updateDashboardStats();
                 } else {
                     emotes = [];
                     adminCustomEmotes = [];
+                    updateDashboardStats();
                 }
                 // Reload all emotes if we're on the view-all-emotes tab
                 const viewAllTab = document.getElementById('view-all-emotes');
@@ -2009,31 +1795,6 @@
             }
         }
 
-        function showSection(sectionName) {
-            // Hide all sections
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                section.style.display = 'none';
-            });
-
-            // Remove active class from all nav buttons
-            const navBtns = document.querySelectorAll('.nav-btn');
-            navBtns.forEach(btn => btn.classList.remove('active'));
-
-            // Show selected section
-            const targetSection = document.getElementById(sectionName + '-section');
-            if (targetSection) {
-                targetSection.style.display = 'block';
-            }
-
-            // Add active class to clicked button
-            event.target.classList.add('active');
-
-            // Load all emotes when switching to emote management
-            if (sectionName === 'emote-management') {
-                loadAllEmotesFromIndex();
-            }
-        }
 
         function switchTab(tabName) {
             // Hide all tab contents
@@ -2494,258 +2255,422 @@
         // Note: We only manage users created through this admin panel
         // No Firebase sync is needed - all users are stored in localStorage
 
-        // User Management Functions
-        function switchUserTab(tabName) {
-            const contents = document.querySelectorAll('#user-management-section .tab-content');
-            contents.forEach(content => content.classList.remove('active'));
+        // User Management functions removed as per request to use only Key/HID system.
+    </script>
 
-            const tabs = document.querySelectorAll('#user-management-section .tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
 
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-
-            if (tabName === 'all-users') {
-                loadAllUsers();
-            }
+    <script>
+        // ===== KEY MANAGEMENT FUNCTIONS =====
+        function toggleCustomDate(val) {
+            document.getElementById('custom-date-container').style.display = val === 'custom' ? 'block' : 'none';
         }
 
-        async function createUser() {
-            const email = document.getElementById('new-user-email').value.trim();
-            const password = document.getElementById('new-user-password').value;
-            const accessDays = parseInt(document.getElementById('user-access-days').value);
+        // Generate a random key in PRIME-XXXX-XXXX-XXXX format
+        function generateRandomKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const part = (len) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+            const key = `PRIME-${part(4)}-${part(4)}-${part(4)}`;
+            document.getElementById('generated-key-display').value = key;
+            return key;
+        }
 
-            if (!email || !password || !accessDays) {
-                showAlert('দয়া করে সব তথ্য পূরণ করুন!', 'error');
-                return;
+        let editingKeyId = null;
+
+        // Save or Update key in Firebase
+        async function saveNewKey() {
+            const email = document.getElementById('key-user-email').value.trim();
+            const plan = document.getElementById('key-plan').value;
+            const duration = document.getElementById('key-expiry-duration').value;
+            const hwid = document.getElementById('key-hwid').value.trim();
+            let key = document.getElementById('generated-key-display').value.trim();
+
+            if (!key) { key = generateRandomKey(); }
+
+            const db = window.firebaseDB;
+            const push = window.firebasePush;
+            const update = window.firebaseUpdate;
+            const ref = window.firebaseRef;
+            const keyRef = ref(db, 'keys');
+
+            let expiryMs = 0;
+            let customExpiresAt = null;
+
+            if (duration === '1h') expiryMs = 1 * 3600000;
+            else if (duration === '24h') expiryMs = 24 * 3600000;
+            else if (duration === '3d') expiryMs = 3 * 86400000;
+            else if (duration === '5d') expiryMs = 5 * 86400000;
+            else if (duration === '7d') expiryMs = 7 * 86400000;
+            else if (duration === '30d') expiryMs = 30 * 86400000;
+            else if (duration === 'custom') {
+                const customDate = document.getElementById('key-custom-date').value;
+                if (!customDate) { alert('মেয়াদ শেষ হওয়ার তারিখ সিলেক্ট করুন!'); return; }
+                customExpiresAt = new Date(customDate).getTime() + (23 * 3600000 + 59 * 60000 + 59 * 1000); // End of the day
             }
 
-            if (password.length < 6) {
-                showAlert('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!', 'error');
-                return;
-            }
+            const keyData = {
+                key: key,
+                email: email || '',
+                plan: plan,
+                isActive: true,
+                expiresAt: customExpiresAt || (expiryMs > 0 ? Date.now() + expiryMs : null),
+                hwid: hwid || null
+            };
 
             try {
-                const auth = window.firebaseAuth;
-
-                // Import createUserWithEmailAndPassword
-                const { createUserWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
-
-                // Create user in Firebase
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // Calculate expiry date
-                const expiryDate = new Date();
-                expiryDate.setDate(expiryDate.getDate() + accessDays);
-
-                // Store user data in localStorage
-                let users = JSON.parse(localStorage.getItem('appUsers')) || {};
-                users[user.uid] = {
-                    email: email,
-                    createdAt: new Date().toISOString(),
-                    expiryDate: expiryDate.toISOString(),
-                    accessDays: accessDays,
-                    banned: false,
-                    uid: user.uid
-                };
-                localStorage.setItem('appUsers', JSON.stringify(users));
-
-                // Clear form
-                document.getElementById('new-user-email').value = '';
-                document.getElementById('new-user-password').value = '';
-                document.getElementById('user-access-days').value = '';
-
-                showAlert('ইউজার সফলভাবে Firebase এ তৈরি এবং localStorage এ সেভ হয়েছে!', 'success');
-
-                // Reload user list
-                loadAllUsers();
-            } catch (error) {
-                console.error('Error creating user:', error);
-                let errorMessage = 'ইউজার তৈরি করতে সমস্যা হয়েছে!';
-
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'এই ইমেইল ইতিমধ্যে ব্যবহৃত হয়েছে!';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'ইমেইল ঠিকানা সঠিক নয়!';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = 'পাসওয়ার্ড আরও শক্তিশালী হতে হবে!';
+                if (editingKeyId) {
+                    // Update existing
+                    await update(ref(db, `keys/${editingKeyId}`), keyData);
+                    showAlert('✅ Key সফলভাবে আপডেট করা হয়েছে!', 'success');
+                    cancelEdit();
+                } else {
+                    // Create new
+                    keyData.createdAt = Date.now();
+                    keyData.loginCount = 0;
+                    keyData.lastLogin = null;
+                    await push(keyRef, keyData);
+                    showAlert('✅ Key সফলভাবে তৈরি হয়েছে! Key: ' + key, 'success');
+                    clearKeyForm();
                 }
-
-                showAlert(errorMessage, 'error');
+                loadKeyList();
+            } catch (err) {
+                showAlert('Error: ' + err.message, 'error');
             }
         }
 
-        function loadAllUsers() {
-            const userList = document.getElementById('user-list');
-            userList.innerHTML = '<p style="text-align: center; color: #94a3b8;">লোড হচ্ছে...</p>';
+        // Function to fill form for editing
+        window.editKey = function (keyId, keyDataJson) {
+            const keyData = JSON.parse(decodeURIComponent(keyDataJson));
+            editingKeyId = keyId;
 
-            // Get users from localStorage only
-            let localUsers = JSON.parse(localStorage.getItem('appUsers')) || {};
+            document.getElementById('key-user-email').value = keyData.email || '';
+            document.getElementById('key-plan').value = keyData.plan || 'Free';
+            document.getElementById('generated-key-display').value = keyData.key || '';
+            document.getElementById('key-hwid').value = keyData.hwid || '';
 
-            // Filter out deleted users
-            localUsers = Object.fromEntries(
-                Object.entries(localUsers).filter(([uid, user]) => !user.deleted)
-            );
+            // Handle duration/expiry
+            document.getElementById('key-expiry-duration').value = '0'; // Default to lifetime or reset
+            document.getElementById('custom-date-container').style.display = 'none';
 
-            userList.innerHTML = '';
+            // Update UI for editing
+            const saveBtn = document.getElementById('save-key-btn');
+            saveBtn.innerHTML = '<i class="fas fa-edit"></i> Key আপডেট করুন';
+            saveBtn.className = 'btn btn-warning';
 
-            if (Object.keys(localUsers).length === 0) {
-                userList.innerHTML = '<p style="text-align: center; color: #94a3b8;">কোন ইউজার নেই</p>';
-                return;
-            }
+            document.getElementById('cancel-edit-btn').style.display = 'inline-block';
+            document.getElementById('key-management-section').scrollIntoView({ behavior: 'smooth' });
+        };
 
-            Object.values(localUsers).forEach(user => {
-                const now = new Date();
-                const expiryDate = new Date(user.expiryDate);
-                const isExpired = now > expiryDate;
-                const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        window.cancelEdit = function () {
+            editingKeyId = null;
+            clearKeyForm();
+            const saveBtn = document.getElementById('save-key-btn');
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Key সেভ করুন ও Firebase-এ যোগ করুন';
+            saveBtn.className = 'btn btn-success';
+            document.getElementById('cancel-edit-btn').style.display = 'none';
+        };
 
-                let status = 'active';
-                let statusText = 'সক্রিয়';
+        function clearKeyForm() {
+            document.getElementById('key-user-email').value = '';
+            document.getElementById('key-plan').value = 'Free';
+            document.getElementById('key-expiry-duration').value = '0';
+            document.getElementById('custom-date-container').style.display = 'none';
+            document.getElementById('key-custom-date').value = '';
+            document.getElementById('generated-key-display').value = '';
+            document.getElementById('key-hwid').value = '';
+            generateRandomKey();
+        }
 
-                if (user.banned) {
-                    status = 'banned';
-                    statusText = 'ব্যানড';
-                } else if (isExpired) {
-                    status = 'expired';
-                    statusText = 'মেয়াদ শেষ';
-                }
+        // ---- Key List Cache & Global Listener ----
+        let _keysCache = null;          // in-memory cache
+        let _keysListenerSet = false;   // guard: only register listener once
 
-                const card = document.createElement('div');
-                card.className = `user-card ${status}`;
-                card.innerHTML = `
-                    <div class="user-info-row">
-                        <div class="user-email">${user.email}</div>
-                        <span class="user-status ${status}">${statusText}</span>
-                    </div>
-                    <div style="color: #94a3b8; font-size: 13px; margin-bottom: 5px;">
-                        <i class="fas fa-user-tag"></i> UID: ${user.uid}
-                    </div>
-                    <div style="color: #94a3b8; font-size: 13px; margin-bottom: 5px;">
-                        <i class="fas fa-calendar-plus"></i> তৈরি: ${new Date(user.createdAt).toLocaleDateString('bn-BD')}
-                    </div>
-                    <div style="color: #94a3b8; font-size: 13px; margin-bottom: 5px;">
-                        <i class="fas fa-calendar-check"></i> মেয়াদ শেষ: ${expiryDate.toLocaleDateString('bn-BD')}
-                        ${!user.banned && !isExpired ? `<span style="color: #22c55e; margin-left: 10px;">(${daysLeft} দিন বাকি)</span>` : ''}
-                    </div>
-                    <div style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">
-                        <i class="fas fa-clock"></i> এক্সেস টাইম: ${user.accessDays} দিন
-                    </div>
-                    <div class="user-actions">
-                        <button class="btn btn-primary" onclick="editUser('${user.uid}')">
-                            <i class="fas fa-edit"></i> এডিট
-                        </button>
-                        ${user.banned ?
-                        `<button class="btn btn-success" onclick="unbanUser('${user.uid}')">
-                                <i class="fas fa-unlock"></i> আনব্যান
-                            </button>` :
-                        `<button class="btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;" onclick="banUser('${user.uid}')">
-                                <i class="fas fa-ban"></i> ব্যান
-                            </button>`
-                    }
-                        <button class="btn btn-danger" onclick="deleteUser('${user.uid}', '${user.email}')">
-                            <i class="fas fa-trash"></i> ডিলিট
-                        </button>
-                    </div>
-                `;
-                userList.appendChild(card);
+        function setupKeysListener() {
+            if (_keysListenerSet) return;   // already listening
+            _keysListenerSet = true;
+
+            const db = window.firebaseDB;
+            const onValue = window.firebaseOnValue;
+            const ref = window.firebaseRef;
+
+            onValue(ref(db, 'keys'), (snapshot) => {
+                // Update cache
+                _keysCache = snapshot.exists() ? snapshot.val() : null;
+                // Re-render wherever visible
+                renderKeyList();
+                // Update dashboard stats
+                updateDashboardStats();
             });
         }
 
-        function editUser(uid) {
-            const users = JSON.parse(localStorage.getItem('appUsers')) || {};
-            const user = users[uid];
+        function renderKeyList() {
+            const container = document.getElementById('key-list-container');
+            if (!container) return;
 
-            if (!user) {
-                showAlert('ইউজার পাওয়া যায়নি!', 'error');
+            if (!_keysCache) {
+                container.innerHTML = '<p style="color: rgba(255,255,255,0.4); text-align:center; padding: 30px;">কোনো Key পাওয়া যায়নি। নতুন Key তৈরি করুন।</p>';
                 return;
             }
 
-            const newDays = prompt(`নতুন এক্সেস টাইম দিন (দিন):\nবর্তমান: ${user.accessDays} দিন`, user.accessDays);
+            const keys = _keysCache;
+            let html = '';
 
-            if (newDays === null) return;
+            // Sort keys by createdAt descending (Newest first)
+            const sortedKeys = Object.entries(keys).sort((a, b) => {
+                return (b[1].createdAt || 0) - (a[1].createdAt || 0);
+            });
 
-            const days = parseInt(newDays);
-            if (isNaN(days) || days < 1) {
-                showAlert('সঠিক সংখ্যা দিন!', 'error');
-                return;
-            }
+            sortedKeys.forEach(([keyId, keyData]) => {
+                const isExpired = keyData.expiresAt && Date.now() > keyData.expiresAt;
+                const statusColor = !keyData.isActive ? '#ef4444' : isExpired ? '#f59e0b' : '#22c55e';
+                const statusText = !keyData.isActive ? 'নিষ্ক্রিয়' : isExpired ? 'মেয়াদ শেষ' : 'সক্রিয়';
+                const expiryText = keyData.expiresAt
+                    ? new Date(keyData.expiresAt).toLocaleDateString('bn-BD')
+                    : 'কোনো মেয়াদ নেই';
+                const lastLoginText = keyData.lastLogin
+                    ? new Date(keyData.lastLogin).toLocaleString('bn-BD')
+                    : 'কখনো লগইন করেনি';
+                const hwidText = keyData.hwid || 'Bind করা হয়নি';
 
-            // Update expiry date
-            const newExpiryDate = new Date(user.createdAt);
-            newExpiryDate.setDate(newExpiryDate.getDate() + days);
+                html += `
+                <div style="background: rgba(17,65,120,0.5); border: 1px solid rgba(148,163,184,0.2); border-radius: 14px; padding: 20px; margin-bottom: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <div style="font-size: 15px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px;">
+                                <i class="fas fa-envelope" style="color: #38bdf8;"></i> ${keyData.email || 'No Email'}
+                                <span style="background: rgba(20,184,166,0.15); color: #2dd4bf; font-size: 11px; padding: 2px 8px; border-radius: 6px; margin-left: 8px;">${keyData.plan}</span>
+                            </div>
+                        </div>
+                        <span style="padding: 4px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: ${statusColor}22; color: ${statusColor}; border: 1px solid ${statusColor}44;">
+                            ${statusText}
+                        </span>
+                    </div>
 
-            user.accessDays = days;
-            user.expiryDate = newExpiryDate.toISOString();
+                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; margin: 12px 0; display: flex; align-items: center; gap: 10px;">
+                        <code style="font-family: monospace; color: #38bdf8; font-size: 16px; letter-spacing: 3px; flex: 1;">${keyData.key}</code>
+                        <button onclick="navigator.clipboard.writeText('${keyData.key}').then(() => showAlert('Key কপি হয়েছে!', 'success'))"
+                            style="background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
 
-            users[uid] = user;
-            localStorage.setItem('appUsers', JSON.stringify(users));
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 14px;">
+                        <span><i class="fas fa-calendar" style="color: #38bdf8;"></i> মেয়াদ: ${expiryText}</span>
+                        <span><i class="fas fa-sign-in-alt" style="color: #38bdf8;"></i> লগইন: ${keyData.loginCount || 0}</span>
+                        <span><i class="fas fa-clock" style="color: #38bdf8;"></i> শেষ লগইন: ${lastLoginText}</span>
+                        <span style="grid-column: 1 / -1;"><i class="fas fa-microchip" style="color: #38bdf8;"></i> Device ID: <code style="color: #fca5a5;">${hwidText}</code></span>
+                    </div>
 
-            showAlert('ইউজার আপডেট হয়েছে!', 'success');
-            loadAllUsers();
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button onclick="editKey('${keyId}', '${encodeURIComponent(JSON.stringify(keyData))}')"
+                            class="btn btn-warning" style="flex: 1; min-width: 100px; justify-content: center; font-size: 12px;">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button onclick="toggleKeyStatus('${keyId}', ${keyData.isActive})"
+                            class="btn ${keyData.isActive ? 'btn-danger' : 'btn-success'}" style="flex: 1; min-width: 120px; justify-content: center; font-size: 12px;">
+                            <i class="fas fa-${keyData.isActive ? 'ban' : 'check'}"></i> ${keyData.isActive ? 'নিষ্ক্রিয় করুন' : 'সক্রিয় করুন'}
+                        </button>
+                        <button onclick="deleteKey('${keyId}', '${keyData.key}')"
+                            class="btn btn-danger" style="flex: 1; min-width: 120px; justify-content: center; font-size: 12px;">
+                            <i class="fas fa-trash"></i> মুছুন
+                        </button>
+                        ${keyData.hwid ? `
+                        <button onclick="resetKeyHWID('${keyId}')"
+                            class="btn btn-info" style="flex: 1; min-width: 120px; justify-content: center; font-size: 12px;">
+                            <i class="fas fa-redo"></i> Reset HID
+                        </button>` : ''}
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html || `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-dim);">No licenses found in the database.</div>`;
         }
 
-        function banUser(uid) {
-            const users = JSON.parse(localStorage.getItem('appUsers')) || {};
-            const user = users[uid];
+        // loadKeyList: instant if cached, starts listener if not
+        function loadKeyList() {
+            const container = document.getElementById('key-list-container');
+            if (!container) return;
 
-            if (!user) {
-                showAlert('ইউজার পাওয়া যায়নি!', 'error');
-                return;
+            if (_keysCache !== null) {
+                // Instant render from cache — no loading delay
+                renderKeyList();
+            } else {
+                // Show skeleton while first load happens
+                container.innerHTML = `
+                <div style="text-align:center; padding: 40px; color: var(--text-dim);">
+                    <div style="width:36px; height:36px; border:3px solid rgba(14,165,233,0.2); border-top-color: #0ea5e9; border-radius:50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px;"></div>
+                    <span style="font-size:13px;">Loading keys...</span>
+                </div>`;
             }
-
-            if (confirm(`আপনি কি নিশ্চিত যে ${user.email} কে ব্যান করতে চান?`)) {
-                user.banned = true;
-                users[uid] = user;
-                localStorage.setItem('appUsers', JSON.stringify(users));
-
-                showAlert('ইউজার ব্যান হয়েছে!', 'success');
-                loadAllUsers();
+            // Ensure the global listener is active
+            if (window.firebaseDB) {
+                setupKeysListener();
             }
         }
 
-        function unbanUser(uid) {
-            const users = JSON.parse(localStorage.getItem('appUsers')) || {};
-            const user = users[uid];
-
-            if (!user) {
-                showAlert('ইউজার পাওয়া যায়নি!', 'error');
-                return;
-            }
-
-            user.banned = false;
-            users[uid] = user;
-            localStorage.setItem('appUsers', JSON.stringify(users));
-
-            showAlert('ইউজার আনব্যান হয়েছে!', 'success');
-            loadAllUsers();
-        }
-
-        async function deleteUser(uid, email) {
-            if (!confirm(`আপনি কি নিশ্চিত যে ${email} কে ডিলিট করতে চান?\n\nসতর্কতা: এটি localStorage থেকে ইউজার ডিলিট করবে এবং ইউজার আর লগইন করতে পারবে না।`)) {
-                return;
-            }
-
+        // Toggle key active/inactive
+        async function toggleKeyStatus(keyId, currentStatus) {
+            const db = window.firebaseDB;
+            const update = window.firebaseUpdate;
+            const ref = window.firebaseRef;
             try {
-                // Mark user as deleted in localStorage
-                const users = JSON.parse(localStorage.getItem('appUsers')) || {};
-
-                if (users[uid]) {
-                    // Mark as deleted instead of removing completely
-                    users[uid].deleted = true;
-                    users[uid].deletedAt = new Date().toISOString();
-                    localStorage.setItem('appUsers', JSON.stringify(users));
-                }
-
-                showAlert('ইউজার সফলভাবে ডিলিট হয়েছে! ইউজার আর লগইন করতে পারবে না।', 'success');
-
-                loadAllUsers();
-
-            } catch (error) {
-                console.error('Error deleting user:', error);
-                showAlert('ইউজার ডিলিট করতে সমস্যা হয়েছে: ' + error.message, 'error');
+                await update(ref(db, `keys/${keyId}`), { isActive: !currentStatus });
+                showAlert(currentStatus ? 'Key নিষ্ক্রিয় করা হয়েছে।' : 'Key সক্রিয় করা হয়েছে।', 'success');
+            } catch (err) {
+                showAlert('Error: ' + err.message, 'error');
             }
+        }
+
+        // Delete a key
+        async function deleteKey(keyId, keyValue) {
+            if (!confirm(`আপনি কি নিশ্চিত যে "${keyValue}" key মুছতে চান?`)) return;
+            const db = window.firebaseDB;
+            const remove = window.firebaseRemove;
+            const ref = window.firebaseRef;
+            try {
+                await remove(ref(db, `keys/${keyId}`));
+                showAlert('Key মুছে ফেলা হয়েছে।', 'success');
+            } catch (err) {
+                showAlert('Error: ' + err.message, 'error');
+            }
+        }
+
+        // Reset HID for a key
+        async function resetKeyHWID(keyId) {
+            if (!confirm('আপনি কি নিশ্চিত যে এই Key-এর Device ID রিসেট করতে চান?')) return;
+            const db = window.firebaseDB;
+            const update = window.firebaseUpdate;
+            const ref = window.firebaseRef;
+            try {
+                await update(ref(db, `keys/${keyId}`), { hwid: null });
+                showAlert('Device ID সফলভাবে রিসেট করা হয়েছে।', 'success');
+            } catch (err) {
+                showAlert('Error: ' + err.message, 'error');
+            }
+        }
+
+        // Auto-generate a key on page load for convenience
+        document.addEventListener('DOMContentLoaded', () => {
+            generateRandomKey();
+        });
+
+        // Multi-section visibility control
+        window.showSection = function (sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
+
+            // Show requested
+            const targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) targetSection.style.display = 'block';
+
+            // Update Page Header
+            const titleEl = document.getElementById('current-section-title');
+            const descEl = document.getElementById('current-section-desc');
+
+            // Format title
+            const formattedTitle = sectionName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            titleEl.textContent = formattedTitle;
+
+            // Set description based on section
+            const descs = {
+                'key-management': 'Manage your access keys and license durations',
+                'emote-management': 'Control available emotes and player interactions',
+                'announcement': 'Send global messages to all active users',
+                'social-links': 'Update your YouTube, Discord and other links',
+                'header-settings': 'Customize your website header and branding',
+                'notifications': 'Manage system alerts and push notifications',
+                'category-management': 'Organize emotes into tactical categories'
+            };
+            descEl.textContent = descs[sectionName] || 'Overview and settings';
+
+            // Update Sidebar Active State
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick').includes(`'${sectionName}'`)) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Specific logic
+            if (sectionName === 'key-management') loadKeyList();
+            if (sectionName === 'emote-management') loadAllEmotesFromIndex();
+
+            // Animate section entry
+            targetSection.style.display = 'block';
+            targetSection.style.animation = 'none';
+            targetSection.offsetHeight; // trigger reflow
+            targetSection.style.animation = 'fadeIn 0.4s ease forwards';
+        };
+
+        // Update counts in dashboard widgets
+        function updateDashboardStats() {
+            const db = window.firebaseDB;
+            const ref = window.firebaseRef;
+            const onValue = window.firebaseOnValue;
+            if (!db || !ref || !onValue) return;
+
+            // Keys Count
+            onValue(ref(db, 'keys'), (snapshot) => {
+                const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+                const el = document.getElementById('stat-total-keys');
+                if (el) {
+                    el.textContent = count;
+                    el.classList.add('pulse-text');
+                    setTimeout(() => el.classList.remove('pulse-text'), 1000);
+                }
+            });
+
+            // Emotes Count
+            // Combine firebase emotes and parsed index emotes
+            const firebaseEmotesCount = adminCustomEmotes ? adminCustomEmotes.length : 0;
+            const indexEmotesCount = adminIndexEmotes ? adminIndexEmotes.length : 0;
+            const total = firebaseEmotesCount + indexEmotesCount;
+            const el = document.getElementById('stat-total-emotes');
+            if (el) {
+                el.textContent = total;
+                el.classList.add('pulse-text');
+                setTimeout(() => el.classList.remove('pulse-text'), 1000);
+            }
+        }
+
+        // Run stats update on load
+        document.addEventListener('DOMContentLoaded', updateDashboardStats);
+
+        // Initialize Unique "PRIME-X Digital DNA"
+        if (typeof particlesJS !== 'undefined') {
+            particlesJS('admin-particles-js', {
+                "particles": {
+                    "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                    "color": { "value": "#38bdf8" },
+                    "shape": {
+                        "type": "char",
+                        "character": {
+                            "value": ["P", "X", "1", "0"],
+                            "font": "Monospace", "style": "", "weight": "800"
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.25, "random": true,
+                        "anim": { "enable": true, "speed": 1, "opacity_min": 0.05, "sync": false }
+                    },
+                    "size": {
+                        "value": 14, "random": true,
+                        "anim": { "enable": true, "speed": 2, "size_min": 8, "sync": false }
+                    },
+                    "line_linked": { "enable": false },
+                    "move": {
+                        "enable": true, "speed": 1.5, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "window",
+                    "events": { "onhover": { "enable": true, "mode": "bubble" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                    "modes": {
+                        "bubble": { "distance": 150, "size": 25, "duration": 0.4, "opacity": 0.8 },
+                        "push": { "particles_nb": 4 }
+                    }
+                },
+                "retina_detect": true
+            });
         }
     </script>
 </body>
